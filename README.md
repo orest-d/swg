@@ -1,0 +1,4 @@
+swg
+===
+
+Static Web Gallery
