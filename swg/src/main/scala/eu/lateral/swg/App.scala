@@ -16,8 +16,29 @@ This file is part of Static Web Gallery (SWG).
 */
 package eu.lateral.swg
 
+import eu.lateral.swg.utils._
+import org.apache.commons.vfs2.AllFileSelector
+import org.apache.commons.vfs2.VFS
+
 object App{
   def main(argv:Array[String]){
-    println("Hello")
+    println("SWG")
+    println(setupDatabase())
+    val manager = VFS.getManager
+    //val file1 = manager.resolveFile("file:///home/orest/zlos/webdev/gallery/GIT/swg/g1-in")
+    //val file1 = manager.resolveFile("res://templates/g1")
+    //val file1 = manager.resolveFile("jar:///home/orest/zlos/webdev/gallery/GIT/swg/target/swg-1.0-SNAPSHOT-jar-with-dependencies.jar!/templates/g1")
+    
+    /*
+    val templatesLink=if (exists("src/main/resources/templates/g1")){
+      absolutePath("src/main/resources/templates")
+    }
+    */
+    val f = manager.resolveFile(getClass.getResource(getClass.getSimpleName() + ".class").toString)
+    val ff = f.getParent.getParent.getParent.getParent.resolveFile("templates") 
+    println(ff.getURL)
+    val file1 = ff
+    val file2 = manager.resolveFile("file:///home/orest/zlos/webdev/gallery/GIT/swg/g1-out")
+    file2.copyFrom(file1, new AllFileSelector)
   }
 }
