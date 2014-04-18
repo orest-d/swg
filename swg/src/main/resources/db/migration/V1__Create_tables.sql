@@ -30,11 +30,11 @@ FROM project_languages, languages
 WHERE  project_languages.language_id = languages.id;
 
 CREATE TABLE siteinfo(
-  id          BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_id  BIGINT,
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT,
   project_language_id BIGINT,
-  title       VARCHAR(255),
-  menutitle   VARCHAR(255),
+  title               VARCHAR(255),
+  menutitle           VARCHAR(255),
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
   UNIQUE(project_id, project_language_id)
@@ -52,6 +52,66 @@ SELECT
   language_name
 FROM siteinfo, projects, project_languages_view
 WHERE projects.id=siteinfo.project_id AND project_language_id=project_languages_view.id;
+
+CREATE TABLE translations(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT,
+  project_language_id BIGINT,
+  translation_name    VARCHAR(255) NOT NULL,
+  translation         VARCHAR(255),
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
+  UNIQUE(project_id, project_language_id, translation_name)
+);
+
+CREATE VIEW translations_view AS
+SELECT 
+  translations.id AS id,
+  translations.project_id AS project_id,
+  project_language_id,
+  translation_name,
+  translation,
+  language_code,
+  language_name
+FROM translations, project_languages_view
+WHERE project_language_id=project_languages_view.id;
+
+CREATE TABLE articles(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT,
+  project_language_id BIGINT,
+  article_name        VARCHAR(255) NOT NULL,
+  article_title       VARCHAR(255),
+  article_text        CLOB,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
+  UNIQUE(project_id, project_language_id, article_name)
+);
+
+CREATE VIEW articles_view AS
+SELECT 
+  articles.id AS id,
+  articles.project_id AS project_id,
+  project_language_id,
+  article_name,
+  article_title,
+  article_text,
+  language_code,
+  language_name
+FROM articles, project_languages_view
+WHERE project_language_id=project_languages_view.id;
+
+CREATE TABLE images(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT,
+  image_id            INT,
+  image_filename      VARCHAR(255),
+  original_image      BLOB,
+  big_image           BLOB,
+  thumbnail_image     BLOB,  
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  UNIQUE(project_id, image_id)
+);
 
 -- Create default project settings
 INSERT INTO projects (project_name) VALUES ('default'); 

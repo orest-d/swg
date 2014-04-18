@@ -17,18 +17,4 @@ package object utils {
   def exists(path: String) = (new File(path)).exists
   def absolutePath(path: String) = (new File(path)).getAbsolutePath
 
-  def setupDatabase() = {
-    val result=Try {
-      if (!exists("swg.h2.db")) {
-        val flyway = new Flyway
-        flyway.setDataSource("jdbc:h2:swg", "sa", "");
-        flyway.migrate();
-        "Database initialized"
-      } else {
-        "Database exists"
-      }
-    }
-    result.getOrElse(result.toString)
-  }
-
 }

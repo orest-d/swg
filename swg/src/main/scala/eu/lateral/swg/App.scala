@@ -23,7 +23,6 @@ import org.apache.commons.vfs2.VFS
 object App{
   def main(argv:Array[String]){
     println("SWG")
-    println(setupDatabase())
     val manager = VFS.getManager
     //val file1 = manager.resolveFile("file:///home/orest/zlos/webdev/gallery/GIT/swg/g1-in")
     //val file1 = manager.resolveFile("res://templates/g1")

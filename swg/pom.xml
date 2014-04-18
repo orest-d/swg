@@ -41,12 +41,13 @@
             <artifactId>commons-vfs2</artifactId>
             <version>2.0</version>
         </dependency>
-<dependency>
-	<groupId>commons-httpclient</groupId>
-	<artifactId>commons-httpclient</artifactId>
-	<version>3.1</version>
-</dependency>
-                    <!-- Database -->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+        
+        <!-- Database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -57,7 +58,12 @@
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
         </dependency>
-            
+        <dependency>
+            <groupId>org.squeryl</groupId>
+            <artifactId>squeryl_2.10</artifactId>
+            <version>0.9.5-6</version>
+        </dependency>
+                    
         <!-- Test -->
         <dependency>
             <groupId>org.scalatest</groupId>
