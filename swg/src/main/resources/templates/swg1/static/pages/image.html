@@ -1,0 +1,28 @@
+<h1>{{galleryName()}}</h1>
+<div class="row">
+    <div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default" ng-click="goToPrevious()" >
+                <div ng-switch="isPreviousImageNrValid()">
+                    <div ng-switch-when="true"><span class="glyphicon glyphicon-chevron-left" ></span></div>
+                    <div ng-switch-when="false"><span class="glyphicon glyphicon-stop" ></span></div>
+                </div>
+            </button>
+            <button type="button" class="btn btn-default" ng-click="goUp()"><span class="glyphicon glyphicon-chevron-up"></span></button>
+            <button type="button" class="btn btn-default" ng-click="goToNext()">
+                <div ng-switch="isNextImageNrValid()">
+                    <div ng-switch-when="true"><span class="glyphicon glyphicon-chevron-right" ></span></div>
+                    <div ng-switch-when="false"><span class="glyphicon glyphicon-stop" ></span></div>
+                </div>                
+            </button>
+        </div>
+        <div class="thumbnail">
+            <img ng-src="{{selectedImage().url}}"/>
+            <div class="caption">
+                <h3>{{imageName()}}</h3>
+                <p>{{imageAuthor()}}, {{imageTechnique()}}, {{imageSize()}}, {{imageInception()}}</p>        
+            </div>
+        </div>
+    </div>
+</div>
+

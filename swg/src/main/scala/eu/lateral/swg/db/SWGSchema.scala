@@ -16,7 +16,15 @@ This file is part of Static Web Gallery (SWG).
 */
 package eu.lateral.swg.db
 import org.squeryl.Schema
+import org.squeryl.PrimitiveTypeMode._
 
-object SWGSchema extends Schema{
+object SWGSchema extends Schema {
   val projects = table[Project]("projects")
+  val languages = table[Language]("languages")
+  val projectLanguages = table[ProjectLanguage]("project_languages")
+  val projectLanguagesView = table[ProjectLanguageView]("project_languages_view")
+
+  val projectToLanguages =
+    oneToManyRelation(projects, projectLanguagesView).
+      via((p, l) => p.id === l.projectId)
 }
