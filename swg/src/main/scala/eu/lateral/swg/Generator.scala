@@ -26,6 +26,7 @@ class Generator {
 
     save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js")
     save(siteinfo(project), destination, "data/siteinfo.json")
+    save(translations(project), destination, "data/translation.json")
   }
 
   def save(text: String, destination: FileObject, relativeDestinationPath: String) = {
@@ -62,5 +63,14 @@ class Generator {
     val menutitle = "\"menutitle\":{" + project.siteInfo.map(x => s"$q${x.languageCode}$q:$q${x.menuTitle}$q").mkString(",") + "}"
     val languages = "\"languages\":{" + project.languages.map(x => s"$q${x.languageCode}$q:$q${x.languageName}$q").mkString(",") + "}"
     "{" + title + "," + menutitle + "," + languages + "}"
+  }
+  def translations(project: Project) = transaction {
+    val q = "\""
+    val trans = project.translations.toList
+    val trtext = for (name <- Set(trans.map(_.translationName):_*)) yield {
+      val tr = (for (t <- trans; if (t.translationName == name)) yield s"$q${t.languageCode}$q:$q{t.translation}$q").mkString(",")
+      "\""+name+"\"{"+tr+"}"
+    }
+    "{" + trtext.mkString(",\n") + "}"
   }
 }

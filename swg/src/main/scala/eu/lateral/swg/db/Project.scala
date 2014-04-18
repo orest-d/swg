@@ -27,6 +27,7 @@ class Project(
   def this() = this(0, "")
   lazy val languages: OneToMany[ProjectLanguageView] = SWGSchema.projectToLanguages.left(this)
   lazy val siteInfo: OneToMany[SiteInfoView] = SWGSchema.projectToSiteInfo.left(this)
+  lazy val translations: OneToMany[TranslationView] = SWGSchema.projectToTranslations.left(this)
   def addLanguageByCode(code: String) = {
     inTransaction {
       if (languages.forall(_.languageCode != code)) {
@@ -38,7 +39,7 @@ class Project(
   }
   def removeLanguageByCode(code: String) = {
     inTransaction {
-      for (projectLanguage <- languages; if (projectLanguage.languageCode == code)){
+      for (projectLanguage <- languages; if (projectLanguage.languageCode == code)) {
         SWGSchema.projectLanguages.delete(projectLanguage.id)
       }
     }
@@ -46,7 +47,7 @@ class Project(
 }
 
 object Project {
-  def default:Project = inTransaction {
+  def default: Project = inTransaction {
     SWGSchema.projects.lookup(1L).get
   }
 }
