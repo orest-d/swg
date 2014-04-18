@@ -23,8 +23,13 @@ object SWGSchema extends Schema {
   val languages = table[Language]("languages")
   val projectLanguages = table[ProjectLanguage]("project_languages")
   val projectLanguagesView = table[ProjectLanguageView]("project_languages_view")
-
+  val siteInfo = table[SiteInfo]("siteinfo")
+  val siteInfoView = table[SiteInfoView]("siteinfo_view")
+  
   val projectToLanguages =
     oneToManyRelation(projects, projectLanguagesView).
+      via((p, l) => p.id === l.projectId)
+  val projectToSiteInfo =
+    oneToManyRelation(projects, siteInfoView).
       via((p, l) => p.id === l.projectId)
 }

@@ -16,15 +16,15 @@ galleryControllers.controller('SiteCtrl', ['$scope', '$http', '$rootScope',
             $scope.siteinfo = data;
         });
         $scope.languagecode = function() {
-            var lc = $scope.siteinfo.languages;
+            var lc = $$LANGUAGETOCODE$$;
             return lc[$scope.language];
         };
         $scope.translate = function(text) {
             return $scope.translation[text][$scope.languagecode()];
         };
-        $scope.languages = [];
+        $scope.languages = $$LANGUAGES$$;
 
-        $scope.language = "English";
+        $scope.language = "$$DEFAULTLANGUAGE$$";
 
         $scope.title = function() {
             if ($scope.siteinfo.title) {
@@ -126,12 +126,12 @@ galleryControllers.controller('PageCtrl', ['$scope', '$http', '$rootScope', '$ro
             return selected;
         };
         $scope.languagecode = function() {
-            var lc = {"English": "en", "Slovensky": "sk"};
+            var lc = $$LANGUAGETOCODE$$;
             return lc[$scope.language];
         };
         $scope.translate = function(text) {
             return $scope.translation[text][$scope.languagecode()];
-        }
+        };
         $scope.language = "English";
         $rootScope.$watch(
                 function() {

@@ -26,6 +26,7 @@ class Project(
   @Column("project_name") val projectName: String) extends KeyedEntity[Long] {
   def this() = this(0, "")
   lazy val languages: OneToMany[ProjectLanguageView] = SWGSchema.projectToLanguages.left(this)
+  lazy val siteInfo: OneToMany[SiteInfoView] = SWGSchema.projectToSiteInfo.left(this)
   def addLanguageByCode(code: String) = {
     inTransaction {
       if (languages.forall(_.languageCode != code)) {

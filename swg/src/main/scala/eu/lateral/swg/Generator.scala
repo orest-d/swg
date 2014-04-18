@@ -8,8 +8,11 @@ package eu.lateral.swg
 
 import eu.lateral.swg.db.Project
 import eu.lateral.swg.utils._
+import org.apache.commons.io.IOUtils
 import org.apache.commons.vfs2.AllFileSelector
+import org.apache.commons.vfs2.FileObject
 import org.apache.commons.vfs2.VFS
+import org.squeryl.PrimitiveTypeMode._
 
 class Generator {
   def template = defaultTemplateURL
@@ -18,5 +21,46 @@ class Generator {
     val destination = manager.resolveFile(destinationURL)
     val staticTemplates = manager.resolveFile(template).getChild("static")
     destination.copyFrom(staticTemplates, new AllFileSelector)
+
+    val controller = manager.resolveFile(template).getChild("dynamic").getChild("js").getChild("controllers.js")
+
+    save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js")
+    save(siteinfo(project), destination, "data/siteinfo.json")
+  }
+
+  def save(text: String, destination: FileObject, relativeDestinationPath: String) = {
+    val destinationFile = destination.resolveFile(relativeDestinationPath)
+    val input = IOUtils.toInputStream(text)
+    val output = destinationFile.getContent.getOutputStream
+    IOUtils.copy(input, output)
+    input.close()
+    output.close()
+  }
+
+  def substitute(text: String, project: Project) = {
+    text.
+      replaceAllLiterally("$$LANGUAGETOCODE$$", languagecodes(project)).
+      replaceAllLiterally("$$LANGUAGES$$", languagesJSONList(project)).
+      replaceAllLiterally("$$DEFAULTLANGUAGE$$", defaultlanguage(project))
+
+  }
+  def languagecodes(project: Project) = transaction {
+    val q = "\""
+    "{" + project.languages.map(x => s"$q${x.languageName}$q:$q${x.languageCode}$q").mkString(",") + "}"
+  }
+
+  def defaultlanguage(project: Project) = transaction {
+    project.languages.head.languageName
+  }
+
+  def languagesJSONList(project: Project) = transaction {
+    "[" + project.languages.map(x => "\"" + x.languageName + "\"").mkString(",") + "]"
+  }
+  def siteinfo(project: Project) = transaction {
+    val q = "\""
+    val title = "\"title\":{" + project.siteInfo.map(x => s"$q${x.languageCode}$q:$q${x.title}$q").mkString(",") + "}"
+    val menutitle = "\"menutitle\":{" + project.siteInfo.map(x => s"$q${x.languageCode}$q:$q${x.menuTitle}$q").mkString(",") + "}"
+    val languages = "\"languages\":{" + project.languages.map(x => s"$q${x.languageCode}$q:$q${x.languageName}$q").mkString(",") + "}"
+    "{" + title + "," + menutitle + "," + languages + "}"
   }
 }
