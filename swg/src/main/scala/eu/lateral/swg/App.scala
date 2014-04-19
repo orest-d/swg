@@ -30,6 +30,7 @@ object App {
     options.addOption("h", "help", false, "print this help")
     options.addOption("g", "generate", false, "Generate the site")
     options.addOption("o", "output", true, "Path to a local directory to deploy")
+    options.addOption("d", "database", true, "Database name")
     val parser = new GnuParser
     val cli = parser.parse(options, arg)
 
@@ -38,12 +39,13 @@ object App {
       System.exit(0)
     }
 
+    SessionManager.initializeDatabase(cli.getOptionValue("database", "swg"))
+
     if (cli.hasOption("generate")) {
       val url = urlFromPath(cli.getOptionValue("output", "www"))
-      SessionManager.initializeDatabase()
       val g = new Generator
       g.deploy(Project.default, url)
-      System.exit(0)      
+      System.exit(0)
     }
     val app = new eu.lateral.swg.gui.App()
     app.createUI()

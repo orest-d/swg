@@ -38,10 +38,13 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Combo;
 
 public class UserInterface {
 	public Display display;
 	public Shell shell;
+	public Label statusLabel;
+	public Combo languageCombo;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -63,29 +66,41 @@ public class UserInterface {
 		this.display = display;
 		this.shell = mainShell;
 		mainShell.setLayout(new FillLayout(SWT.HORIZONTAL));
-
+		
 		Composite composite = new Composite(mainShell, SWT.NONE);
-		composite.setLayout(new GridLayout(1, false));
+		composite.setLayout(new GridLayout(2, false));
 		
-		ToolBar toolBar = new ToolBar(composite, SWT.FLAT | SWT.RIGHT);
-		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		languageCombo = new Combo(composite, SWT.NONE);
+		languageCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
-		ToolItem languageDropdownItem = new ToolItem(toolBar, SWT.DROP_DOWN);
-		languageDropdownItem.setText("DropDown Item");
-		
-		ToolItem tltmDeploy = new ToolItem(toolBar, SWT.NONE);
-		tltmDeploy.setText("Deploy");
+		Button deployButton = new Button(composite, SWT.NONE);
+		deployButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				deploy();
+			}
+		});
+		deployButton.setText("Deploy");
 		
 		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
-		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-		gd_tabFolder.heightHint = 208;
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		gd_tabFolder.widthHint = 305;
 		tabFolder.setLayoutData(gd_tabFolder);
+		
+		statusLabel = new Label(composite, SWT.NONE);
+		statusLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		statusLabel.setText("OK");
 		shell.open();
 		shell.layout();
 		init();
 		return 0;
 	}
 	
+	public void setStatus(String text){
+		statusLabel.setText(text);
+	}
 	public void init(){		
+	}
+	public void deploy(){		
 	}
 }
