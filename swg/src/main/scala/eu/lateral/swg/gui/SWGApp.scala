@@ -15,8 +15,10 @@
  along with SWG.  If not, see <http://www.gnu.org/licenses/>.
  */
 package eu.lateral.swg.gui
+import eu.lateral.swg.db.Language
 import eu.lateral.swg.db.Project
 import eu.lateral.swg.Generator
+import eu.lateral.swg.db.SWGSchema
 import eu.lateral.swg.db.SessionManager
 import eu.lateral.swg.utils._
 import org.eclipse.swt.SWT
@@ -24,6 +26,7 @@ import org.squeryl.PrimitiveTypeMode._
 
 class SWGApp extends UserInterface {
   var project = Project.default
+  var allLanguages = List.empty[Language]
 
   def selectedSiteInfo = {
     inTransaction {
@@ -40,18 +43,51 @@ class SWGApp extends UserInterface {
   }
   override def loadDataIntoSiteInfo() {
     transaction {
-      for (info <- selectedSiteInfo) {
+      val ssi = selectedSiteInfo
+      for (info <- ssi) {
         titleText.setText(info.title)
+        menuTitleText.setText(info.menuTitle)
+      }
+      if (!ssi.isDefined) {
+        titleText.setText("")
+        menuTitleText.setText("")
       }
     }
   }
-  override def init() {
+  def saveDataIntoSiteInfo() {
     transaction {
-      languageCombo.setItems(project.languages.map(_.languageName).toArray)
+      val info = selectedSiteInfo
+      if (info.isDefined) {
+        update(SWGSchema.siteInfo)(x =>
+          where(x.id === info.get.id)
+            set (
+              x.title := titleText.getText,
+              x.menuTitle := menuTitleText.getText))
+      }
     }
+  }
+  def loadAllLanguages()={
+    inTransaction{
+      allLanguages=from(SWGSchema.languages)(x => select(x)).toList
+    }
+  }
+  override def init() {
+    loadAllLanguages()
+    siteLanguagesList.setItems(allLanguages.map(_.languageName).toArray)
+    transaction {
+      val languages = project.languages.map(_.languageName).toArray
+      languageCombo.setItems(languages)
+      if (languages.length>0){
+        languageCombo.select(0)
+      }
+            
+    }    
     loadDataIntoSiteInfo
   }
-  override def languageChanged(){
+  override def languageChanged() {
     loadDataIntoSiteInfo()
+  }
+  override def siteInfoUpdated(){
+    saveDataIntoSiteInfo()
   }
 }

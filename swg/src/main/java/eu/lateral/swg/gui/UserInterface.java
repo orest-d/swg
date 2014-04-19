@@ -40,6 +40,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 
 public class UserInterface {
 	public Display display;
@@ -58,7 +60,7 @@ public class UserInterface {
 	public int createUI() {
 		Display display = new Display();
 		Shell mainShell = new Shell(display, SWT.RESIZE | SWT.TITLE);
-		mainShell.setSize(466, 486);
+		mainShell.setSize(547, 486);
 		mainShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
 					System.exit(0);
@@ -104,7 +106,7 @@ public class UserInterface {
 		
 		Composite composite_1 = new Composite(tabFolder, SWT.NONE);
 		tbtmSiteInfo.setControl(composite_1);
-		composite_1.setLayout(new GridLayout(2, false));
+		composite_1.setLayout(new GridLayout(3, false));
 		
 		Label lblTitle = new Label(composite_1, SWT.NONE);
 		lblTitle.setText("Title");
@@ -117,6 +119,7 @@ public class UserInterface {
 			}
 		});
 		titleText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite_1, SWT.NONE);
 		
 		Label lblMenuTitle = new Label(composite_1, SWT.NONE);
 		lblMenuTitle.setText("Menu title");
@@ -129,6 +132,7 @@ public class UserInterface {
 			}
 		});
 		menuTitleText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		new Label(composite_1, SWT.NONE);
 		
 		Label lblDefaultLanguage = new Label(composite_1, SWT.NONE);
 		lblDefaultLanguage.setText("Default language");
@@ -143,11 +147,12 @@ public class UserInterface {
 		GridData gd_defaultLanguageCombo = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
 		gd_defaultLanguageCombo.widthHint = 205;
 		defaultLanguageCombo.setLayoutData(gd_defaultLanguageCombo);
+		new Label(composite_1, SWT.NONE);
 		
 		Label lblSiteLanguages = new Label(composite_1, SWT.NONE);
 		lblSiteLanguages.setText("Site languages");
 		
-		siteLanguagesList = new List(composite_1, SWT.BORDER);
+		siteLanguagesList = new List(composite_1, SWT.BORDER | SWT.MULTI);
 		siteLanguagesList.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -158,6 +163,22 @@ public class UserInterface {
 		gd_siteLanguagesList.widthHint = 202;
 		siteLanguagesList.setLayoutData(gd_siteLanguagesList);
 		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		new Label(composite_1, SWT.NONE);
+		
+		Button btnOk = new Button(composite_1, SWT.NONE);
+		btnOk.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				siteInfoUpdated();
+			}
+		});
+		GridData gd_btnOk = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnOk.widthHint = 94;
+		btnOk.setLayoutData(gd_btnOk);
+		btnOk.setText("OK");
 		
 		statusLabel = new Label(composite, SWT.NONE);
 		statusLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
