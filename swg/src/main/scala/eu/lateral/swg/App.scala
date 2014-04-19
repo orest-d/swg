@@ -18,14 +18,35 @@ package eu.lateral.swg
 
 import eu.lateral.swg.utils._
 import eu.lateral.swg.db._
+import org.apache.commons.cli.GnuParser
+import org.apache.commons.cli.HelpFormatter
+import org.apache.commons.cli.Options
 import org.apache.commons.vfs2.AllFileSelector
 import org.apache.commons.vfs2.VFS
 
-object App{
-  def main(argv:Array[String]){
-    println("SWG")    
-    SessionManager.initializeDatabase()
-    val g = new Generator
-    g.deploy(Project.default, "file:///home/orest/zlos/webdev/gallery/GIT/swg/destination")
+object App {
+  def main(arg: Array[String]) {
+    val options = new Options()
+    options.addOption("h", "help", false, "print this help")
+    options.addOption("g", "generate", false, "Generate the site")
+    options.addOption("o", "output", true, "Path to a local directory to deploy")
+    val parser = new GnuParser
+    val cli = parser.parse(options, arg)
+
+    if (cli.hasOption("help")) {
+      (new HelpFormatter).printHelp("swg", options)
+      System.exit(0)
+    }
+
+    if (cli.hasOption("generate")) {
+      val url = urlFromPath(cli.getOptionValue("output", "www"))
+      SessionManager.initializeDatabase()
+      val g = new Generator
+      g.deploy(Project.default, url)
+      System.exit(0)      
+    }
+    val app = new eu.lateral.swg.gui.App()
+    app.createUI()
+    app.mainloop()
   }
 }
