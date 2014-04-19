@@ -23,8 +23,9 @@ import org.squeryl.dsl.OneToMany
 
 class Project(
   @Column("id") val id: Long,
-  @Column("project_name") val projectName: String) extends KeyedEntity[Long] {
-  def this() = this(0, "")
+  @Column("project_name") val projectName: String,
+  @Column("default_language_id") val defaultLanguageId: Long) extends KeyedEntity[Long] {
+  def this() = this(0, "", 0)
   lazy val languages: OneToMany[ProjectLanguageView] = SWGSchema.projectToLanguages.left(this)
   lazy val siteInfo: OneToMany[SiteInfoView] = SWGSchema.projectToSiteInfo.left(this)
   lazy val translations: OneToMany[TranslationView] = SWGSchema.projectToTranslations.left(this)
@@ -44,6 +45,16 @@ class Project(
         SWGSchema.projectLanguages.delete(projectLanguage.id)
       }
     }
+  }
+  def defaultLanguageName = {
+    inTransaction {
+      from(SWGSchema.languages)(x => where(x.id === defaultLanguageId) select (x.languageName))
+    }.headOption
+  }
+  def defaultLanguageCode = {
+    inTransaction {
+      from(SWGSchema.languages)(x => where(x.id === defaultLanguageId) select (x.languageCode))
+    }.headOption
   }
 }
 

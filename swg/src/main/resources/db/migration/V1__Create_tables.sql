@@ -1,14 +1,14 @@
 -- Create tables
+CREATE TABLE languages(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  language_code       VARCHAR(32) NOT NULL UNIQUE,
+  language_name       VARCHAR(255) NOT NULL
+);
 
 CREATE TABLE projects (
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_name        VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE languages(
-  id                  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  language_code       VARCHAR(32) NOT NULL UNIQUE,
-  language_name       VARCHAR(255) NOT NULL
+  project_name        VARCHAR(255) NOT NULL,
+  default_language_id BIGINT,  
 );
 
 CREATE TABLE project_languages(
@@ -114,9 +114,9 @@ CREATE TABLE images(
 );
 
 -- Create default project settings
-INSERT INTO projects (project_name) VALUES ('default'); 
 INSERT INTO languages (language_code,language_name) VALUES ('en','English'); 
 INSERT INTO languages (language_code,language_name) VALUES ('sk','Slovensky'); 
 INSERT INTO languages (language_code,language_name) VALUES ('de','Deutsch');
+INSERT INTO projects (project_name,default_language_id) VALUES ('default',1); 
 INSERT INTO project_languages (project_id,language_id) VALUES (1,1);
 INSERT INTO siteinfo (project_id,project_language_id,title,menutitle) VALUES (1,1,'Sample Project','Menu');
