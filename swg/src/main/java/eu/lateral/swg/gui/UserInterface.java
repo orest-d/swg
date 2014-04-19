@@ -36,6 +36,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class UserInterface {
 	public Display display;
@@ -64,6 +66,20 @@ public class UserInterface {
 
 		Composite composite = new Composite(mainShell, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
+		
+		ToolBar toolBar = new ToolBar(composite, SWT.FLAT | SWT.RIGHT);
+		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		
+		ToolItem languageDropdownItem = new ToolItem(toolBar, SWT.DROP_DOWN);
+		languageDropdownItem.setText("DropDown Item");
+		
+		ToolItem tltmDeploy = new ToolItem(toolBar, SWT.NONE);
+		tltmDeploy.setText("Deploy");
+		
+		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
+		GridData gd_tabFolder = new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
+		gd_tabFolder.heightHint = 208;
+		tabFolder.setLayoutData(gd_tabFolder);
 		shell.open();
 		shell.layout();
 		init();

@@ -1,19 +1,19 @@
 /*
-This file is part of Static Web Gallery (SWG).
+ This file is part of Static Web Gallery (SWG).
 
-    MathMaster is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ MathMaster is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
 
-    MathMaster is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ MathMaster is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with SWG.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ You should have received a copy of the GNU General Public License
+ along with SWG.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package eu.lateral.swg
 
 import eu.lateral.swg.db.Project
@@ -77,10 +77,22 @@ class Generator {
   def translations(project: Project) = transaction {
     val q = "\""
     val trans = project.translations.toList
-    val trtext = for (name <- Set(trans.map(_.translationName):_*)) yield {
+    val trtext = for (name <- Set(trans.map(_.translationName): _*)) yield {
       val tr = (for (t <- trans; if (t.translationName == name)) yield s"$q${t.languageCode}$q:$q{t.translation}$q").mkString(",")
-      "\""+name+"\"{"+tr+"}"
+      "\"" + name + "\"{" + tr + "}"
     }
     "{" + trtext.mkString(",\n") + "}"
+  }
+  def articles(project: Project) = transaction {
+    val q = "\""
+    val articles = project.articles.toList
+    val text = for (name <- Set(articles.map(_.articleName): _*)) yield {
+      val atext = (for (a <- articles; if (a.articleName == name)) yield s"""<div ng-switch-when="${a.languageName}">
+<h1>${a.articleTitle}</h1>
+${a.articleText}
+</div>
+""").mkString
+    }
+    text.mkString
   }
 }
