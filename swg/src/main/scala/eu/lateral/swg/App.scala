@@ -46,7 +46,7 @@ object App extends ConsoleStatusMonitor {
 
     if (cli.hasOption("images")) {
       val url = urlFromPath(cli.getOptionValue("imagespath", "images"))
-      Images.importImages(url)
+      ImageUtils.importImages(Project.default, url, this)
       System.exit(0)
     }
 

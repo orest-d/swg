@@ -13,8 +13,8 @@ CREATE TABLE projects (
 
 CREATE TABLE project_languages(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_id          BIGINT,
-  language_id         BIGINT,
+  project_id          BIGINT NOT NULL,
+  language_id         BIGINT NOT NULL,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
   FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE
 );
@@ -31,8 +31,8 @@ WHERE  project_languages.language_id = languages.id;
 
 CREATE TABLE siteinfo(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_id          BIGINT,
-  project_language_id BIGINT,
+  project_id          BIGINT NOT NULL,
+  project_language_id BIGINT NOT NULL,
   title               VARCHAR(255),
   menutitle           VARCHAR(255),
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
@@ -55,8 +55,8 @@ WHERE projects.id=siteinfo.project_id AND project_language_id=project_languages_
 
 CREATE TABLE translations(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_id          BIGINT,
-  project_language_id BIGINT,
+  project_id          BIGINT NOT NULL,
+  project_language_id BIGINT NOT NULL,
   translation_name    VARCHAR(255) NOT NULL,
   translation         VARCHAR(255),
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
@@ -78,8 +78,8 @@ WHERE project_language_id=project_languages_view.id;
 
 CREATE TABLE articles(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_id          BIGINT,
-  project_language_id BIGINT,
+  project_id          BIGINT NOT NULL,
+  project_language_id BIGINT NOT NULL,
   article_name        VARCHAR(255) NOT NULL,
   article_title       VARCHAR(255),
   article_text        CLOB,
@@ -103,14 +103,15 @@ WHERE project_language_id=project_languages_view.id;
 
 CREATE TABLE images(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  project_id          BIGINT,
-  image_id            INT,
-  image_filename      VARCHAR(255),
+  project_id          BIGINT NOT NULL,
+  image_number        INT NOT NULL,
+  source_url          VARCHAR(255),
+  relative_path       VARCHAR(255),
   original_image      BLOB,
   big_image           BLOB,
   thumbnail_image     BLOB,  
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
-  UNIQUE(project_id, image_id)
+  UNIQUE(project_id, image_number)
 );
 
 -- Create default project settings

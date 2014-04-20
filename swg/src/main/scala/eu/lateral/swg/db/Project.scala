@@ -30,6 +30,13 @@ class Project(
   lazy val siteInfo: OneToMany[SiteInfoView] = SWGSchema.projectToSiteInfo.left(this)
   lazy val translations: OneToMany[TranslationView] = SWGSchema.projectToTranslations.left(this)
   lazy val articles: OneToMany[ArticleView] = SWGSchema.projectToArticles.left(this)
+  lazy val images: OneToMany[ImageRecord] = SWGSchema.projectToImages.left(this)
+  
+  def maxImageNumber = {
+    val nums = images.map(_.imageNumber)
+    if (nums.isEmpty) 0 else nums.max
+  }
+  
   def addLanguageByCode(code: String) = {
     inTransaction {
       if (languages.forall(_.languageCode != code)) {

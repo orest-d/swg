@@ -17,6 +17,7 @@ This file is part of Static Web Gallery (SWG).
 package eu.lateral.swg
 
 import java.io.File
+import org.apache.commons.io.IOUtils
 import org.apache.commons.vfs2.FileObject
 import org.apache.commons.vfs2.FileType
 import org.apache.commons.vfs2.VFS
@@ -57,4 +58,6 @@ package object utils {
   def ancestors(file: FileObject): Stream[FileObject] = {
     if (file == null) Stream.empty else file #:: ancestors(file.getParent)
   }
+  def toByteArray(file:FileObject)=IOUtils.toByteArray(file.getContent.getInputStream)
+
 }
