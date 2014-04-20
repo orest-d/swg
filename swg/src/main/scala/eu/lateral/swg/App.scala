@@ -24,13 +24,16 @@ import org.apache.commons.cli.Options
 import org.apache.commons.vfs2.AllFileSelector
 import org.apache.commons.vfs2.VFS
 
-object App {
+object App extends ConsoleStatusMonitor {
   def main(arg: Array[String]) {
     val options = new Options()
     options.addOption("h", "help", false, "print this help")
     options.addOption("g", "generate", false, "Generate the site")
     options.addOption("o", "output", true, "Path to a local directory to deploy")
     options.addOption("d", "database", true, "Database name")
+    options.addOption("i", "images", false, "Import images")
+    options.addOption("p", "imagespath", true, "path to the images")
+
     val parser = new GnuParser
     val cli = parser.parse(options, arg)
 
@@ -41,10 +44,16 @@ object App {
 
     SessionManager.initializeDatabase(cli.getOptionValue("database", "swg"))
 
+    if (cli.hasOption("images")) {
+      val url = urlFromPath(cli.getOptionValue("imagespath", "images"))
+      Images.importImages(url)
+      System.exit(0)
+    }
+
     if (cli.hasOption("generate")) {
       val url = urlFromPath(cli.getOptionValue("output", "www"))
       val g = new Generator
-      g.deploy(Project.default, url)
+      g.deploy(Project.default, url, this)
       System.exit(0)
     }
     val app = new eu.lateral.swg.gui.App()

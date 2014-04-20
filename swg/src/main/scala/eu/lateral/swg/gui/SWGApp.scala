@@ -18,15 +18,51 @@ package eu.lateral.swg.gui
 import eu.lateral.swg.db.Language
 import eu.lateral.swg.db.Project
 import eu.lateral.swg.Generator
+import eu.lateral.swg.StatusMonitor
 import eu.lateral.swg.db.SWGSchema
 import eu.lateral.swg.db.SessionManager
 import eu.lateral.swg.utils._
 import org.eclipse.swt.SWT
+import org.eclipse.swt.graphics.Color
+import org.eclipse.swt.widgets.Display
 import org.squeryl.PrimitiveTypeMode._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
-class SWGApp extends UserInterface {
+class SWGApp extends UserInterface with StatusMonitor {
   var project = Project.default
   var allLanguages = List.empty[Language]
+  def runnable(perform: => Unit) = new Runnable {
+    override def run() = perform
+  }
+  def swtAssync(perform: => Unit) = {
+    if (display == null) {
+      println("null display")
+      perform
+    } else {
+      display.asyncExec(runnable(perform))
+    }
+  }
+  def color(r: Int, g: Int, b: Int) = {
+    val device = Display.getCurrent
+    new Color(device, r, g, b)
+  }
+
+  def info(text: String): Unit = {
+    println(text)
+    swtAssync {
+      statusLabel.setBackground(color(240, 240, 240))
+      statusLabel.setText(text)
+    }
+  }
+
+  def error(text: String): Unit = {
+    println("ERROR: " + text)
+    swtAssync {
+      statusLabel.setBackground(color(255, 10, 10))
+      statusLabel.setText(text)
+    }
+  }
 
   def selectedSiteInfo = {
     inTransaction {
@@ -35,11 +71,15 @@ class SWGApp extends UserInterface {
       if (info isDefinedAt index) Some(info(index)) else None
     }
   }
-  override def deploy() {
+  override def deploy() = {
     val url = urlFromPath("www1")
     SessionManager.initializeDatabase()
-    val g = new Generator
-    g.deploy(project, url)
+    val f = future {
+      val g = new Generator
+      g.deploy(project, url, this)
+    }
+    f.onSuccess{case _ =>info("OK")}
+    f.onFailure{case t =>error(t)}        
   }
   override def loadDataIntoSiteInfo() {
     transaction {
@@ -47,10 +87,10 @@ class SWGApp extends UserInterface {
       for (info <- ssi) {
         titleText.setText(info.title)
         menuTitleText.setText(info.menuTitle)
-      }
-      if (!ssi.isDefined) {
-        titleText.setText("")
-        menuTitleText.setText("")
+        if (!ssi.isDefined) {
+          titleText.setText("")
+          menuTitleText.setText("")
+        }
       }
     }
   }
@@ -66,9 +106,9 @@ class SWGApp extends UserInterface {
       }
     }
   }
-  def loadAllLanguages()={
-    inTransaction{
-      allLanguages=from(SWGSchema.languages)(x => select(x)).toList
+  def loadAllLanguages() = {
+    inTransaction {
+      allLanguages = from(SWGSchema.languages)(x => select(x)).toList
     }
   }
   override def init() {
@@ -77,17 +117,17 @@ class SWGApp extends UserInterface {
     transaction {
       val languages = project.languages.map(_.languageName).toArray
       languageCombo.setItems(languages)
-      if (languages.length>0){
+      if (languages.length > 0) {
         languageCombo.select(0)
       }
-            
-    }    
+
+    }
     loadDataIntoSiteInfo
-  }
-  override def languageChanged() {
-    loadDataIntoSiteInfo()
-  }
-  override def siteInfoUpdated(){
-    saveDataIntoSiteInfo()
-  }
 }
+    override def languageChanged() {
+      loadDataIntoSiteInfo()
+    }
+    override def siteInfoUpdated() {
+      saveDataIntoSiteInfo()
+    }
+  }

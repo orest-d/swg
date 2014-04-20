@@ -181,7 +181,7 @@ public class UserInterface {
 		btnOk.setText("OK");
 		
 		statusLabel = new Label(composite, SWT.NONE);
-		statusLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		statusLabel.setText("OK");
 		
 		progressBar = new ProgressBar(composite, SWT.NONE);

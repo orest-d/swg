@@ -26,20 +26,23 @@ import org.squeryl.PrimitiveTypeMode._
 
 class Generator {
   def template = defaultTemplateURL
-  def deploy(project: Project, destinationURL: String) {
+  def deploy(project: Project, destinationURL: String, monitor: StatusMonitor) {
+    monitor.info(s"Deployment to $destinationURL started")
     val manager = VFS.getManager
     val destination = manager.resolveFile(destinationURL)
     val staticTemplates = manager.resolveFile(template).getChild("static")
     destination.copyFrom(staticTemplates, new AllFileSelector)
 
+    monitor.info(s"Copying static templates")
     val controller = manager.resolveFile(template).getChild("dynamic").getChild("js").getChild("controllers.js")
 
-    save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js")
-    save(siteinfo(project), destination, "data/siteinfo.json")
-    save(translations(project), destination, "data/translation.json")
+    save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js", monitor)
+    save(siteinfo(project), destination, "data/siteinfo.json", monitor)
+    save(translations(project), destination, "data/translation.json", monitor)
   }
 
-  def save(text: String, destination: FileObject, relativeDestinationPath: String) = {
+  def save(text: String, destination: FileObject, relativeDestinationPath: String, monitor: StatusMonitor) = {
+    monitor.info(s"Deploying $relativeDestinationPath")
     val destinationFile = destination.resolveFile(relativeDestinationPath)
     val input = IOUtils.toInputStream(text)
     val output = destinationFile.getContent.getOutputStream

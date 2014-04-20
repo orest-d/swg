@@ -17,6 +17,8 @@ This file is part of Static Web Gallery (SWG).
 package eu.lateral.swg
 
 import java.io.File
+import org.apache.commons.vfs2.FileObject
+import org.apache.commons.vfs2.FileType
 import org.apache.commons.vfs2.VFS
 import scala.util.Try
 import com.googlecode.flyway.core.Flyway
@@ -28,14 +30,31 @@ package object utils {
   def exists(path: String) = (new File(path)).exists
   def delete(path: String) = (new File(path)).delete
   def absolutePath(path: String) = (new File(path)).getAbsolutePath
-  def urlFromPath(path:String)=(new File(path)).toURI.toURL.toExternalForm
+  def urlFromPath(path: String) = (new File(path)).toURI.toURL.toExternalForm
 
-  def embeddedTemplatesBaseURL={
+  def embeddedTemplatesBaseURL = {
     val manager = VFS.getManager
     val file = manager.resolveFile(getClass.getResource(getClass.getSimpleName() + ".class").toString)
     file.getParent.getParent.getParent.getParent.getParent.resolveFile("templates").getURL
   }
-  def defaultTemplateURL={
-    embeddedTemplatesBaseURL+"/swg1"
+  def defaultTemplateURL = {
+    embeddedTemplatesBaseURL + "/swg1"
+  }
+  def traverse(file: FileObject): Stream[FileObject] = {
+    if (file.getType == FileType.FILE) {
+      Stream(file)
+    } else {
+      for (
+        child <- file.getChildren.toStream;
+        leaf <- traverse(child)
+      ) yield leaf
+    }
+  }
+  def toFileObject(url:String)=VFS.getManager.resolveFile(url)
+
+  def traverse(url: String): Stream[FileObject] = traverse(toFileObject(url))
+
+  def ancestors(file: FileObject): Stream[FileObject] = {
+    if (file == null) Stream.empty else file #:: ancestors(file.getParent)
   }
 }
