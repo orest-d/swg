@@ -8,6 +8,10 @@ CREATE TABLE languages(
 CREATE TABLE projects (
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_name        VARCHAR(255) NOT NULL,
+  thumbnail_width     INT,
+  thumbnail_height    INT,
+  image_width         INT,
+  image_height        INT,
   default_language_id BIGINT,  
 );
 
@@ -109,7 +113,9 @@ CREATE TABLE images(
   relative_path       VARCHAR(255),
   original_image      BLOB,
   big_image           BLOB,
+  big_image_format    VARCHAR(32),
   thumbnail_image     BLOB,  
+  thumbnail_format    VARCHAR(32),
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   UNIQUE(project_id, image_number)
 );
@@ -118,6 +124,7 @@ CREATE TABLE images(
 INSERT INTO languages (language_code,language_name) VALUES ('en','English'); 
 INSERT INTO languages (language_code,language_name) VALUES ('sk','Slovensky'); 
 INSERT INTO languages (language_code,language_name) VALUES ('de','Deutsch');
-INSERT INTO projects (project_name,default_language_id) VALUES ('default',1); 
+INSERT INTO projects (project_name,default_language_id,thumbnail_width,thumbnail_height,image_width,image_height)
+  VALUES ('default',1,150,150,800,600); 
 INSERT INTO project_languages (project_id,language_id) VALUES (1,1);
 INSERT INTO siteinfo (project_id,project_language_id,title,menutitle) VALUES (1,1,'Sample Project','Menu');

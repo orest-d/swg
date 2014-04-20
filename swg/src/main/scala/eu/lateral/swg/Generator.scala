@@ -18,6 +18,7 @@ package eu.lateral.swg
 
 import eu.lateral.swg.db.Project
 import eu.lateral.swg.utils._
+import java.io.ByteArrayInputStream
 import org.apache.commons.io.IOUtils
 import org.apache.commons.vfs2.AllFileSelector
 import org.apache.commons.vfs2.FileObject
@@ -39,12 +40,31 @@ class Generator {
     save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js", monitor)
     save(siteinfo(project), destination, "data/siteinfo.json", monitor)
     save(translations(project), destination, "data/translation.json", monitor)
+
+    transaction {
+      for (image <- project.images){
+        val number=image.imageNumber
+        val bigext = image.bigImageFormat
+        val thumbext = image.thumbnailFormat
+        save(image.bigImage,destination,s"images/$number.$bigext",monitor)
+        save(image.thumbnailImage,destination,s"images/${number}t.$thumbext",monitor)
+      }
+    }
   }
 
   def save(text: String, destination: FileObject, relativeDestinationPath: String, monitor: StatusMonitor) = {
     monitor.info(s"Deploying $relativeDestinationPath")
     val destinationFile = destination.resolveFile(relativeDestinationPath)
     val input = IOUtils.toInputStream(text)
+    val output = destinationFile.getContent.getOutputStream
+    IOUtils.copy(input, output)
+    input.close()
+    output.close()
+  }
+  def save(content: Array[Byte], destination: FileObject, relativeDestinationPath: String, monitor: StatusMonitor) = {
+    monitor.info(s"Deploying $relativeDestinationPath")
+    val destinationFile = destination.resolveFile(relativeDestinationPath)
+    val input = new ByteArrayInputStream(content)
     val output = destinationFile.getContent.getOutputStream
     IOUtils.copy(input, output)
     input.close()

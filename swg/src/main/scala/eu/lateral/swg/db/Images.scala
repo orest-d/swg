@@ -28,6 +28,8 @@ class ImageRecord(
   @Column("relative_path") val relativePath: String,
   @Column("original_image") val originalImage: Array[Byte],
   @Column("big_image") val bigImage: Array[Byte],
-  @Column("thumbnail_image") val thumbnailImage: Array[Byte]) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, "", "", null, null, null)
+  @Column("big_image_format") val bigImageFormat: String,
+  @Column("thumbnail_image") val thumbnailImage: Array[Byte],
+  @Column("thumbnail_format") val thumbnailFormat: String) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0, "", "", null, null, "", null, "")
 }

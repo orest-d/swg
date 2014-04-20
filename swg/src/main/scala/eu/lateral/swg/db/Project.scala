@@ -24,19 +24,23 @@ import org.squeryl.dsl.OneToMany
 class Project(
   @Column("id") val id: Long,
   @Column("project_name") val projectName: String,
+  @Column("thumbnail_width") val thumbnailWidth: Int,
+  @Column("thumbnail_height") val thumbnailHeight: Int,
+  @Column("image_width") val imageWidth: Int,
+  @Column("image_height") val imageHeight: Int,
   @Column("default_language_id") val defaultLanguageId: Long) extends KeyedEntity[Long] {
-  def this() = this(0, "", 0)
+  def this() = this(0, "", 0, 0, 0, 0, 0)
   lazy val languages: OneToMany[ProjectLanguageView] = SWGSchema.projectToLanguages.left(this)
   lazy val siteInfo: OneToMany[SiteInfoView] = SWGSchema.projectToSiteInfo.left(this)
   lazy val translations: OneToMany[TranslationView] = SWGSchema.projectToTranslations.left(this)
   lazy val articles: OneToMany[ArticleView] = SWGSchema.projectToArticles.left(this)
   lazy val images: OneToMany[ImageRecord] = SWGSchema.projectToImages.left(this)
-  
+
   def maxImageNumber = {
     val nums = images.map(_.imageNumber)
     if (nums.isEmpty) 0 else nums.max
   }
-  
+
   def addLanguageByCode(code: String) = {
     inTransaction {
       if (languages.forall(_.languageCode != code)) {
