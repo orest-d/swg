@@ -40,6 +40,7 @@ class Generator {
     save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js", monitor)
     save(siteinfo(project), destination, "data/siteinfo.json", monitor)
     save(translations(project), destination, "data/translation.json", monitor)
+    save(menu(project, monitor), destination, "pages/menu.html", monitor)
 
     transaction {
       for (image <- project.images) {
@@ -52,14 +53,14 @@ class Generator {
     }
     transaction {
       for (article <- project.articles) {
-        val content = "<div><div ng-switch='language'>\n"+{
-              for (a <- article.texts) yield{
-                s"""|<div ng-switch-when='${a.languageName}'>
+        val content = "<div><div ng-switch='language'>\n" + {
+          for (a <- article.texts) yield {
+            s"""|<div ng-switch-when='${a.languageName}'>
                     |  <h1>${a.articleTitle}</h1>
                     |  ${a.articleText}
                     |</div>""".stripMargin
-              }
-            }.mkString("\n")+"</div></div>"
+          }
+        }.mkString("\n") + "</div></div>"
         save(content.toString, destination, s"articles/${article.articleNumber}.html", monitor)
       }
     }
@@ -86,9 +87,9 @@ class Generator {
 
   def substitute(text: String, project: Project) = {
     text.
-    replaceAllLiterally("$$LANGUAGETOCODE$$", languagecodes(project)).
-    replaceAllLiterally("$$LANGUAGES$$", languagesJSONList(project)).
-    replaceAllLiterally("$$DEFAULTLANGUAGE$$", defaultlanguage(project))
+      replaceAllLiterally("$$LANGUAGETOCODE$$", languagecodes(project)).
+      replaceAllLiterally("$$LANGUAGES$$", languagesJSONList(project)).
+      replaceAllLiterally("$$DEFAULTLANGUAGE$$", defaultlanguage(project))
 
   }
   def languagecodes(project: Project) = transaction {
@@ -119,4 +120,51 @@ class Generator {
     }
     "{" + trtext.mkString(",\n") + "}"
   }
+
+  val startLevel: Stream[String] = "\n  <div class='list-group-item'>" #:: "\n    <ul class='list-group-item-text'>" #:: "\n      <ul>" #:: startLevel.drop(2)
+
+  val endLevel: Stream[String] = "</div>\n" #:: "</ul>\n" #:: "</ul>\n" #:: endLevel.drop(2)
+
+  val startEncloseLevel: Stream[String] = "" #:: "<h4 class='list-group-item-text'>" #:: "<li>" #:: "<li>" #:: startEncloseLevel.drop(2)
+
+  val endEncloseLevel: Stream[String] = "" #:: "</h4>" #:: "</li>" #:: "</li>" #:: endEncloseLevel.drop(2)
+
+  def menuLink(title: String, link: String, level: Int) = {
+    startEncloseLevel(level) + s"<a href='$link'>$title</a>" + endEncloseLevel(level)
+  }
+
+  def levelTransition(fromLevel: Int, toLevel: Int) = {
+    val t = if (fromLevel < toLevel) {
+      startLevel.drop(fromLevel).take(toLevel - fromLevel).mkString
+    } else {
+      endLevel.drop(toLevel).take(fromLevel - toLevel).reverse.mkString
+    }
+    println(s"LEVEL $fromLevel -> $toLevel => $t")
+    t
+  }
+
+  def menu(project: Project, monitor: StatusMonitor) = transaction {
+    val projectMenu = project.menu.toSeq.toVector
+    val translations = for (language <- project.languages) yield {
+      val entries = for ((menu, index) <- projectMenu.zipWithIndex) yield {
+        val level = 1 max menu.menuLevel
+        val previousLevel = if (index == 0) 0 else 1 max projectMenu(index - 1).menuLevel
+        val article = menu.article        
+        if (article.isDefined) {
+          val articleInLanguage=article.get.texts.filter(x => x.projectLanguageId == language.id).headOption
+          val title = if (articleInLanguage.isDefined) articleInLanguage.get.articleLinkTitle else "unknown" 
+          val link = s"#/article/${menu.articleNumber.get}"
+          levelTransition(previousLevel, level) + menuLink(title, link, level)
+        } else {
+          monitor.error(s"Undefined menu ${menu.menuNumber}")
+          levelTransition(previousLevel, level) + s"\n<!-- Undefined menu ${menu.menuNumber} -->\n"
+        }
+      }
+      val lastlevel = 1 max projectMenu(projectMenu.length - 1).menuLevel
+      s"<div ng-switch-when='${language.languageName}'>\n"+ entries.mkString + levelTransition(lastlevel, 0) + "</div>\n"
+    }
+
+    "<div ng-switch='language'>" + translations.mkString + "</div>"
+  }
+
 }

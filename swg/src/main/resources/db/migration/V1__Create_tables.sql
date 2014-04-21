@@ -94,7 +94,7 @@ CREATE TABLE articles(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
   article_number      INT NOT NULL,
-  publish             BOOLEAN,
+  publish             BOOLEAN NOT NULL,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   UNIQUE(project_id, article_number)
 );

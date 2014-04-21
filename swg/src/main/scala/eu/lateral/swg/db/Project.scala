@@ -35,6 +35,7 @@ class Project(
   lazy val translations: OneToMany[TranslationView] = SWGSchema.projectToTranslations.left(this)
   lazy val articles: OneToMany[Article] = SWGSchema.projectToArticles.left(this)
   lazy val images: OneToMany[ImageRecord] = SWGSchema.projectToImages.left(this)
+  lazy val menu: OneToMany[Menu] = SWGSchema.projectToMenu.left(this)
 
   def maxImageNumber = {
     val nums = images.map(_.imageNumber)

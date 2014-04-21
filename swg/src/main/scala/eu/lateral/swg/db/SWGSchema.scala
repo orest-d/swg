@@ -31,6 +31,7 @@ object SWGSchema extends Schema {
   val articleTexts = table[ArticleTexts]("article_texts")
   val articlesView = table[ArticleView]("articles_view")
   val images = table[ImageRecord]("images")
+  val menu=table[Menu]("menu")
 
   val projectToLanguages =
     oneToManyRelation(projects, projectLanguagesView).
@@ -46,5 +47,8 @@ object SWGSchema extends Schema {
       via((p, l) => p.id === l.projectId)
   val projectToImages =
     oneToManyRelation(projects, images).
+      via((p, l) => p.id === l.projectId)
+  val projectToMenu =
+    oneToManyRelation(projects, menu).
       via((p, l) => p.id === l.projectId)
 }
