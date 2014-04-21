@@ -42,12 +42,25 @@ class Generator {
     save(translations(project), destination, "data/translation.json", monitor)
 
     transaction {
-      for (image <- project.images){
-        val number=image.imageNumber
+      for (image <- project.images) {
+        val number = image.imageNumber
         val bigext = image.bigImageFormat
         val thumbext = image.thumbnailFormat
-        save(image.bigImage,destination,s"images/$number.$bigext",monitor)
-        save(image.thumbnailImage,destination,s"images/${number}t.$thumbext",monitor)
+        save(image.bigImage, destination, s"images/$number.$bigext", monitor)
+        save(image.thumbnailImage, destination, s"images/${number}t.$thumbext", monitor)
+      }
+    }
+    transaction {
+      for (article <- project.articles) {
+        val content = "<div><div ng-switch='language'>\n"+{
+              for (a <- article.texts) yield{
+                s"""|<div ng-switch-when='${a.languageName}'>
+                    |  <h1>${a.articleTitle}</h1>
+                    |  ${a.articleText}
+                    |</div>""".stripMargin
+              }
+            }.mkString("\n")+"</div></div>"
+        save(content.toString, destination, s"articles/${article.articleNumber}.html", monitor)
       }
     }
   }
@@ -73,9 +86,9 @@ class Generator {
 
   def substitute(text: String, project: Project) = {
     text.
-      replaceAllLiterally("$$LANGUAGETOCODE$$", languagecodes(project)).
-      replaceAllLiterally("$$LANGUAGES$$", languagesJSONList(project)).
-      replaceAllLiterally("$$DEFAULTLANGUAGE$$", defaultlanguage(project))
+    replaceAllLiterally("$$LANGUAGETOCODE$$", languagecodes(project)).
+    replaceAllLiterally("$$LANGUAGES$$", languagesJSONList(project)).
+    replaceAllLiterally("$$DEFAULTLANGUAGE$$", defaultlanguage(project))
 
   }
   def languagecodes(project: Project) = transaction {
@@ -106,19 +119,4 @@ class Generator {
     }
     "{" + trtext.mkString(",\n") + "}"
   }
-  /*
-  def articles(project: Project) = transaction {
-    
-    val q = "\""
-    val articles = project.articles.toList
-    val text = for (number <- Set(articles.map(_.articleName): _*)) yield {
-      val atext = (for (a <- articles; if (a.articleName == name)) yield s"""<div ng-switch-when="${a.languageName}">
-<h1>${a.articleTitle}</h1>
-${a.articleText}
-</div>
-""").mkString
-    }
-    text.mkString
-  }
-  */
 }
