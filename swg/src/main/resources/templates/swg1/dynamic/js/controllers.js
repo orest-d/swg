@@ -117,6 +117,7 @@ galleryControllers.controller('PageCtrl', ['$scope', '$http', '$rootScope', '$ro
                         var iimg = img;
                         iimg.imageNr = i;
                         iimg.url = "images/" + imageId + ".jpg";
+                        iimg.thumbnailUrl = "images/" + imageId + "t.png";
                         iimg.translatedName = iimg.name[$scope.languagecode()];
                         selected.push(iimg);
                     }
