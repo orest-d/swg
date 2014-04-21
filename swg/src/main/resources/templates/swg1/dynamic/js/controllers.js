@@ -186,7 +186,10 @@ galleryControllers.controller('PageCtrl', ['$scope', '$http', '$rootScope', '$ro
         $scope.imageSize = function() {
             var w = Math.round($scope.selectedImage().width);
             var h = Math.round($scope.selectedImage().height);
-            return "" + w + " x " + h + " cm";
+            if (w*h>0){
+              return "" + w + " x " + h + " cm,";
+            }
+            else return ""
         };
         $scope.go = function(path) {
             $location.path(path);
