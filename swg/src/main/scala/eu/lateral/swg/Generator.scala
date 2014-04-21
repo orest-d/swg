@@ -134,13 +134,11 @@ class Generator {
   }
 
   def levelTransition(fromLevel: Int, toLevel: Int) = {
-    val t = if (fromLevel < toLevel) {
+    if (fromLevel < toLevel) {
       startLevel.drop(fromLevel).take(toLevel - fromLevel).mkString
     } else {
       endLevel.drop(toLevel).take(fromLevel - toLevel).reverse.mkString
     }
-    println(s"LEVEL $fromLevel -> $toLevel => $t")
-    t
   }
 
   def menu(project: Project, monitor: StatusMonitor) = transaction {

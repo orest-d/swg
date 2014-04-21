@@ -29,7 +29,8 @@ object App extends ConsoleStatusMonitor {
     val options = new Options()
     options.addOption("h", "help", false, "print this help")
     options.addOption("g", "generate", false, "Generate the site")
-    options.addOption("o", "output", true, "Path to a local directory to deploy")
+    options.addOption("o", "output", true, "Path to a local directory to deploy to")
+    options.addOption("u", "url", true, "URL to deploy to")
     options.addOption("d", "database", true, "Database name")
     options.addOption("i", "images", false, "Import images")
     options.addOption("p", "imagespath", true, "path to the images")
@@ -51,7 +52,7 @@ object App extends ConsoleStatusMonitor {
     }
 
     if (cli.hasOption("generate")) {
-      val url = urlFromPath(cli.getOptionValue("output", "www"))
+      val url = cli.getOptionValue("url",urlFromPath(cli.getOptionValue("output", "www")))
       val g = new Generator
       g.deploy(Project.default, url, this)
       System.exit(0)
