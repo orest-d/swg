@@ -40,6 +40,8 @@ class Generator {
     save(substitute(IOUtils.toString(controller.getContent.getInputStream, "US-ASCII"), project), destination, "js/controllers.js", monitor)
     save(siteinfo(project), destination, "data/siteinfo.json", monitor)
     save(translations(project), destination, "data/translation.json", monitor)
+    save(imagesJson(project), destination, "data/images.json", monitor)
+    save(galleriesJson(project), destination, "data/galleries.json", monitor)    
     save(menu(project, monitor), destination, "pages/menu.html", monitor)
 
     transaction {
@@ -147,10 +149,10 @@ class Generator {
       val entries = for ((menu, index) <- projectMenu.zipWithIndex) yield {
         val level = 1 max menu.menuLevel
         val previousLevel = if (index == 0) 0 else 1 max projectMenu(index - 1).menuLevel
-        val article = menu.article        
+        val article = menu.article
         if (article.isDefined) {
-          val articleInLanguage=article.get.texts.filter(x => x.projectLanguageId == language.id).headOption
-          val title = if (articleInLanguage.isDefined) articleInLanguage.get.articleLinkTitle else "unknown" 
+          val articleInLanguage = article.get.texts.filter(x => x.projectLanguageId == language.id).headOption
+          val title = if (articleInLanguage.isDefined) articleInLanguage.get.articleLinkTitle else "unknown"
           val link = s"#/article/${menu.articleNumber.get}"
           levelTransition(previousLevel, level) + menuLink(title, link, level)
         } else {
@@ -159,10 +161,50 @@ class Generator {
         }
       }
       val lastlevel = 1 max projectMenu(projectMenu.length - 1).menuLevel
-      s"<div ng-switch-when='${language.languageName}'>\n"+ entries.mkString + levelTransition(lastlevel, 0) + "</div>\n"
+      s"<div ng-switch-when='${language.languageName}'>\n" + entries.mkString + levelTransition(lastlevel, 0) + "</div>\n"
     }
 
     "<div ng-switch='language'>" + translations.mkString + "</div>"
+  }
+
+  def galleriesJson(project: Project) = transaction {
+    val all = allImagesGalleryJson(project)
+    s"""{
+       |  "all":$all,
+       |  "default":$all
+       |}""".stripMargin
+  }
+
+  def allImagesGalleryJson(project: Project) = inTransaction {
+    val images = project.images.map(x => x.imageNumber.toString).mkString(",")
+    val name = project.siteInfo.map(x => s""""${x.languageCode}":"${x.title}"""").mkString(",")
+    val text = project.siteInfo.map(x => s""""${x.languageCode}":""""").mkString(",")
+    s"""|  {
+        |    "name":{$name},
+        |    "text":{$text},
+        |    "images":[$images]
+        |  }""".stripMargin
+  }
+
+  def imagesJson(project: Project) = transaction {
+    val imagejson = for (image <- project.images) yield {
+      val names = for (translation <- image.translations) yield s"""      "${translation.languageCode}":"${translation.imageTitle}""""
+      val technique = image.technique.headOption.map(_.techniqueKey).getOrElse("")
+      s"""
+      |  {
+      |    "imageId":${image.imageNumber},
+      |    "name":{
+      |${names.mkString(",\n")}
+      |   },
+      |    "technique":"$technique",
+      |    "author":"${image.author}",
+      |    "inception":"${image.inception}",
+      |    "width":${image.width},
+      |    "height":${image.height}
+      |  }""".stripMargin
+
+    }
+    "[\n" + imagejson.mkString(",\n") + "]"
   }
 
 }

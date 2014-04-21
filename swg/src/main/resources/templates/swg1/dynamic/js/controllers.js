@@ -156,7 +156,12 @@ galleryControllers.controller('PageCtrl', ['$scope', '$http', '$rootScope', '$ro
         };
         $scope.imageName = function() {
             {
-                return $scope.selectedImage().translatedName;
+                console.log("IMAGE NAME"+$scope.selectedImageNr);
+                if ($scope.selectedImage()){
+                    var t = $scope.selectedImage().translatedName;
+                    return t?t:$scope.selectedImageNr;
+                }
+                else return "";
             }
         };
         $scope.imageTechnique = function() {

@@ -26,7 +26,7 @@ class Technique(
   def this() = this(0, "")
   def translations = {
     inTransaction {
-      from(SWGSchema.techniqueTranslations)(x => where(id === x.techniqueId) select (x))
+      from(SWGSchema.techniquesView)(x => where(id === x.techniqueId) select (x))
     }
   }
 }
