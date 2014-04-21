@@ -17,6 +17,7 @@
 package eu.lateral.swg
 
 import eu.lateral.swg.db.Project
+import eu.lateral.swg.db.SWGSchema
 import eu.lateral.swg.utils._
 import java.io.ByteArrayInputStream
 import org.apache.commons.io.IOUtils
@@ -120,7 +121,15 @@ class Generator {
       val tr = (for (t <- trans; if (t.translationName == name)) yield s"$q${t.languageCode}$q:$q{t.translation}$q").mkString(",")
       "\"" + name + "\"{" + tr + "}"
     }
-    "{" + trtext.mkString(",\n") + "}"
+    val techniques=for(technique <- from(SWGSchema.techniques)(x => select(x))) yield {
+      val translations = for (trans <- technique.translations) yield{
+        "\""+trans.languageCode+"\":\""+trans.techniqueName+"\""
+      }
+      "\""+technique.techniqueKey +"\":{"+translations.mkString(",\n")+"}"
+    }
+    
+    val alltrans = trtext.toList ::: techniques.toList
+    "{" + alltrans.mkString(",\n") + "}"
   }
 
   val startLevel: Stream[String] = "\n  <div class='list-group-item'>" #:: "\n    <ul class='list-group-item-text'>" #:: "\n      <ul>" #:: startLevel.drop(2)

@@ -209,23 +209,23 @@ INSERT INTO languages (id,language_code,language_name) VALUES (1,'en','English')
 INSERT INTO languages (id,language_code,language_name) VALUES (2,'sk','Slovensky'); 
 INSERT INTO languages (id,language_code,language_name) VALUES (3,'de','Deutsch');
 
-INSERT INTO techniques (id,technique_key) VALUES (1,'copmuter graphics');
+INSERT INTO techniques (id,technique_key) VALUES (1,'computer graphics');
 INSERT INTO techniques (id,technique_key) VALUES (2,'oil painting');
 INSERT INTO techniques (id,technique_key) VALUES (3,'pastel');
 
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,1, 'copmuter graphics');
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,2, 'počítačová grafika');
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,3, 'Computergrafik');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,1, 'computer graphics');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,1, 'počítačová grafika');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,1, 'Computergrafik');
 
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,1, 'oil painting');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,2, 'oil painting');
 INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,2, 'olejomaľba');
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,3, 'Ölgemälde');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,2, 'Ölgemälde');
 
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,1, 'pastel');
-INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,2, 'pastel');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,3, 'pastel');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,3, 'pastel');
 INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,3, 'Pastell');
 
 INSERT INTO projects (project_name,default_language_id,thumbnail_width,thumbnail_height,image_width,image_height)
-  VALUES ('default',1,180,180,900,900); 
+  VALUES ('default',1,180,180,900,620); 
 INSERT INTO project_languages (project_id,language_id) VALUES (1,1);
 INSERT INTO siteinfo (project_id,project_language_id,title,menutitle) VALUES (1,1,'Sample Project','Menu');

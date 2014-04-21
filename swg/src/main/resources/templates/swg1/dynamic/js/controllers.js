@@ -131,8 +131,15 @@ galleryControllers.controller('PageCtrl', ['$scope', '$http', '$rootScope', '$ro
             return lc[$scope.language];
         };
         $scope.translate = function(text) {
-            return $scope.translation[text][$scope.languagecode()];
+            if ($scope.languagecode() && $scope.translation) {
+                if ($scope.translation[text]) {
+                    var t = $scope.translation[text][$scope.languagecode()];
+                    return t ? t : text;
+                }
+            }
+            return text;
         };
+
         $scope.language = "English";
         $rootScope.$watch(
                 function() {
@@ -157,16 +164,17 @@ galleryControllers.controller('PageCtrl', ['$scope', '$http', '$rootScope', '$ro
         };
         $scope.imageName = function() {
             {
-                console.log("IMAGE NAME"+$scope.selectedImageNr);
-                if ($scope.selectedImage()){
+                if ($scope.selectedImage()) {
                     var t = $scope.selectedImage().translatedName;
-                    return t?t:$scope.selectedImageNr;
+                    return t ? t : $scope.selectedImageNr;
                 }
-                else return "";
+                else
+                    return "";
             }
         };
         $scope.imageTechnique = function() {
             {
+
                 return $scope.translate($scope.selectedImage().technique);
             }
         };
