@@ -80,30 +80,52 @@ SELECT
 FROM translations, project_languages_view
 WHERE project_language_id=project_languages_view.id;
 
+CREATE TABLE menu(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT NOT NULL,
+  menu_number         INT,
+  menu_level          INT,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  UNIQUE(project_id, menu_number)
+);
+
 CREATE TABLE articles(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
+  article_number      INT NOT NULL,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  UNIQUE(project_id, article_number)
+);
+
+CREATE TABLE article_texts(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT NOT NULL,
   project_language_id BIGINT NOT NULL,
-  article_name        VARCHAR(255) NOT NULL,
+  article_number      INT NOT NULL,
   article_title       VARCHAR(255),
   article_text        CLOB,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
-  UNIQUE(project_id, project_language_id, article_name)
+  UNIQUE(project_id, project_language_id, article_number)
 );
 
 CREATE VIEW articles_view AS
 SELECT 
-  articles.id AS id,
+  article_texts.id AS id,
+  articles.id AS article_id,
   articles.project_id AS project_id,
   project_language_id,
-  article_name,
+  articles.article_number AS article_number,
   article_title,
   article_text,
   language_code,
   language_name
-FROM articles, project_languages_view
-WHERE project_language_id=project_languages_view.id;
+FROM articles, article_texts, project_languages_view
+WHERE (
+  project_language_id=project_languages_view.id AND
+  articles.project_id=article_texts.project_id AND
+  articles.article_number=article_texts.article_number
+);
 
 CREATE TABLE images(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -125,6 +147,6 @@ INSERT INTO languages (language_code,language_name) VALUES ('en','English');
 INSERT INTO languages (language_code,language_name) VALUES ('sk','Slovensky'); 
 INSERT INTO languages (language_code,language_name) VALUES ('de','Deutsch');
 INSERT INTO projects (project_name,default_language_id,thumbnail_width,thumbnail_height,image_width,image_height)
-  VALUES ('default',1,150,150,800,600); 
+  VALUES ('default',1,180,180,900,900); 
 INSERT INTO project_languages (project_id,language_id) VALUES (1,1);
 INSERT INTO siteinfo (project_id,project_language_id,title,menutitle) VALUES (1,1,'Sample Project','Menu');

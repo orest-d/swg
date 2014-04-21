@@ -19,25 +19,39 @@ import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Schema
 import org.squeryl.annotations.Column
+import org.squeryl.dsl.OneToMany
 
 class Article(
   @Column("id") val id: Long,
   @Column("project_id") val projectId: Long,
+  @Column("article_number") val articleNumber: Int) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0)  
+  def texts={
+    inTransaction{
+      from(SWGSchema.articlesView)(x => where((projectId === x.projectId).and(articleNumber === x.articleNumber))select(x))
+    }
+  }
+}
+
+class ArticleTexts(
+  @Column("id") val id: Long,
+  @Column("project_id") val projectId: Long,
   @Column("project_language_id") val projectLanguageId: Long,
-  @Column("article_name") val articleName: String,
+  @Column("article_number") val articleNumber: Int,
   @Column("article_title") val articleTitle: String,
   @Column("article_text") val articleText: String) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, "", "", "")
+  def this() = this(0, 0, 0, 0, "", "")
 }
 
 class ArticleView(
   @Column("id") val id: Long,
+  @Column("article_id") val articleId: Long,
   @Column("project_id") val projectId: Long,
   @Column("project_language_id") val projectLanguageId: Long,
-  @Column("article_name") val articleName: String,
+  @Column("article_number") val articleNumber: Int,
   @Column("article_title") val articleTitle: String,
   @Column("article_text") val articleText: String,
   @Column("language_code") val languageCode: String,
   @Column("language_name") val languageName: String) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, "", "", "", "", "")
+  def this() = this(0, 0, 0, 0, 0, "", "", "", "")
 }

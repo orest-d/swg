@@ -106,10 +106,12 @@ class Generator {
     }
     "{" + trtext.mkString(",\n") + "}"
   }
+  /*
   def articles(project: Project) = transaction {
+    
     val q = "\""
     val articles = project.articles.toList
-    val text = for (name <- Set(articles.map(_.articleName): _*)) yield {
+    val text = for (number <- Set(articles.map(_.articleName): _*)) yield {
       val atext = (for (a <- articles; if (a.articleName == name)) yield s"""<div ng-switch-when="${a.languageName}">
 <h1>${a.articleTitle}</h1>
 ${a.articleText}
@@ -118,4 +120,5 @@ ${a.articleText}
     }
     text.mkString
   }
+  */
 }

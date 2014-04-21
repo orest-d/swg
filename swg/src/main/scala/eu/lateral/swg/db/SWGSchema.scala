@@ -28,9 +28,10 @@ object SWGSchema extends Schema {
   val translations = table[Translation]("translations")
   val translationsView = table[TranslationView]("translations_view")
   val articles = table[Article]("articles")
+  val articleTexts = table[ArticleTexts]("article_texts")
   val articlesView = table[ArticleView]("articles_view")
   val images = table[ImageRecord]("images")
-  
+
   val projectToLanguages =
     oneToManyRelation(projects, projectLanguagesView).
       via((p, l) => p.id === l.projectId)
@@ -41,7 +42,7 @@ object SWGSchema extends Schema {
     oneToManyRelation(projects, translationsView).
       via((p, l) => p.id === l.projectId)
   val projectToArticles =
-    oneToManyRelation(projects, articlesView).
+    oneToManyRelation(projects, articles).
       via((p, l) => p.id === l.projectId)
   val projectToImages =
     oneToManyRelation(projects, images).
