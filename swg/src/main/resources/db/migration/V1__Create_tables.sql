@@ -85,6 +85,7 @@ CREATE TABLE menu(
   project_id          BIGINT NOT NULL,
   menu_number         INT,
   menu_level          INT,
+  article_number      INT,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   UNIQUE(project_id, menu_number)
 );
@@ -93,6 +94,7 @@ CREATE TABLE articles(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
   article_number      INT NOT NULL,
+  publish             BOOLEAN,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   UNIQUE(project_id, article_number)
 );
@@ -102,6 +104,7 @@ CREATE TABLE article_texts(
   project_id          BIGINT NOT NULL,
   project_language_id BIGINT NOT NULL,
   article_number      INT NOT NULL,
+  article_link_title  VARCHAR(255),
   article_title       VARCHAR(255),
   article_text        CLOB,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
@@ -116,8 +119,10 @@ SELECT
   articles.project_id AS project_id,
   project_language_id,
   articles.article_number AS article_number,
+  article_link_title,
   article_title,
   article_text,
+  publish,
   language_code,
   language_name
 FROM articles, article_texts, project_languages_view

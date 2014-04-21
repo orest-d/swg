@@ -24,11 +24,12 @@ import org.squeryl.dsl.OneToMany
 class Article(
   @Column("id") val id: Long,
   @Column("project_id") val projectId: Long,
-  @Column("article_number") val articleNumber: Int) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0)  
-  def texts={
-    inTransaction{
-      from(SWGSchema.articlesView)(x => where((projectId === x.projectId).and(articleNumber === x.articleNumber))select(x))
+  @Column("article_number") val articleNumber: Int,
+  @Column("publish") val publish: Boolean) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0, false)
+  def texts = {
+    inTransaction {
+      from(SWGSchema.articlesView)(x => where((projectId === x.projectId).and(articleNumber === x.articleNumber)) select (x))
     }
   }
 }
@@ -38,9 +39,10 @@ class ArticleTexts(
   @Column("project_id") val projectId: Long,
   @Column("project_language_id") val projectLanguageId: Long,
   @Column("article_number") val articleNumber: Int,
+  @Column("article_link_title") val articleLinkTitle: String,
   @Column("article_title") val articleTitle: String,
   @Column("article_text") val articleText: String) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, 0, "", "")
+  def this() = this(0, 0, 0, 0, "", "", "")
 }
 
 class ArticleView(
@@ -49,9 +51,11 @@ class ArticleView(
   @Column("project_id") val projectId: Long,
   @Column("project_language_id") val projectLanguageId: Long,
   @Column("article_number") val articleNumber: Int,
+  @Column("article_link_title") val articleLinkTitle: String,
   @Column("article_title") val articleTitle: String,
   @Column("article_text") val articleText: String,
+  @Column("publish") val publish: Boolean,
   @Column("language_code") val languageCode: String,
   @Column("language_name") val languageName: String) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, 0, 0, "", "", "", "")
+  def this() = this(0, 0, 0, 0, 0, "", "", "", false, "", "")
 }
