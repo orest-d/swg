@@ -132,12 +132,33 @@ WHERE (
   articles.article_number=article_texts.article_number
 );
 
+CREATE TABLE technique(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  key                 VARCHAR(255) NOT NULL,
+  UNIQUE(key)
+);
+
+CREATE TABLE technique_translations(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  language_id         BIGINT NOT NULL,
+  technique_id        BIGINT NOT NULL,
+  technique_name      VARCHAR(255),
+  FOREIGN KEY (technique_id) REFERENCES technique(id) ON DELETE CASCADE,  
+  FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE,
+  UNIQUE(language_id,technique_id)
+);
+
 CREATE TABLE images(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
   image_number        INT NOT NULL,
   source_url          VARCHAR(255),
   relative_path       VARCHAR(255),
+  technique           BIGINT,
+  author              VARCHAR(255) NOT NULL DEFAULT '',
+  inception           VARCHAR(255) NOT NULL DEFAULT '',
+  width               REAL NOT NULL DEFAULT 0.0,
+  height              REAL NOT NULL DEFAULT 0.0,
   original_image      BLOB,
   big_image           BLOB,
   big_image_format    VARCHAR(32),
@@ -147,10 +168,51 @@ CREATE TABLE images(
   UNIQUE(project_id, image_number)
 );
 
+CREATE TABLE image_translations(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT NOT NULL,
+  project_language_id BIGINT NOT NULL,
+  image_id            BIGINT NOT NULL,
+  image_title         VARCHAR(255),
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,  
+  FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
+  UNIQUE(project_id, project_language_id, image_id)
+);
+
+CREATE VIEW images_view AS
+SELECT 
+  image_translations.id AS id,
+  image_translations.project_id AS project_id,
+  project_language_id,
+  image_id,
+  image_title,
+  language_code,
+  language_name
+FROM image_translations, project_languages_view
+WHERE (project_language_id=project_languages_view.id);
+
 -- Create default project settings
-INSERT INTO languages (language_code,language_name) VALUES ('en','English'); 
-INSERT INTO languages (language_code,language_name) VALUES ('sk','Slovensky'); 
-INSERT INTO languages (language_code,language_name) VALUES ('de','Deutsch');
+INSERT INTO languages (id,language_code,language_name) VALUES (1,'en','English'); 
+INSERT INTO languages (id,language_code,language_name) VALUES (2,'sk','Slovensky'); 
+INSERT INTO languages (id,language_code,language_name) VALUES (3,'de','Deutsch');
+
+INSERT INTO technique (id,key) VALUES (1,'copmuter graphics');
+INSERT INTO technique (id,key) VALUES (2,'oil painting');
+INSERT INTO technique (id,key) VALUES (3,'pastel');
+
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,1, 'copmuter graphics');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,2, 'počítačová grafika');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,3, 'Computergrafik');
+
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,1, 'oil painting');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,2, 'olejomaľba');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (2,3, 'Ölgemälde');
+
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,1, 'pastel');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,2, 'pastel');
+INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (3,3, 'Pastell');
+
 INSERT INTO projects (project_name,default_language_id,thumbnail_width,thumbnail_height,image_width,image_height)
   VALUES ('default',1,180,180,900,900); 
 INSERT INTO project_languages (project_id,language_id) VALUES (1,1);

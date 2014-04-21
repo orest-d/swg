@@ -26,10 +26,40 @@ class ImageRecord(
   @Column("image_number") val imageNumber: Int,
   @Column("source_url") val sourceURL: String,
   @Column("relative_path") val relativePath: String,
+  @Column("technique") val technique: Long,
+  @Column("author") val author: String,
+  @Column("inception") val inception: String,
+  @Column("width") val width: Double,
+  @Column("height") val height: Double,
   @Column("original_image") val originalImage: Array[Byte],
   @Column("big_image") val bigImage: Array[Byte],
   @Column("big_image_format") val bigImageFormat: String,
   @Column("thumbnail_image") val thumbnailImage: Array[Byte],
   @Column("thumbnail_format") val thumbnailFormat: String) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, "", "", null, null, "", null, "")
+  def this() = this(0, 0, 0, "", "", 0, "", "", 0.0, 0.0, null, null, "", null, "")
+  def translations = {
+    inTransaction {
+      from(SWGSchema.imagesView)(x => where(id === x.imageId) select (x))
+    }
+  }
+}
+
+class ImageTranslation(
+  @Column("id") val id: Long,
+  @Column("project_id") val projectId: Long,
+  @Column("project_language_id") val projectLanguageId: Long,
+  @Column("image_id") val imageId: Long,
+  @Column("image_title") val imageTitle: String) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0, 0, "")
+}
+
+class ImageView(
+  @Column("id") val id: Long,
+  @Column("project_id") val projectId: Long,
+  @Column("project_language_id") val projectLanguageId: Long,
+  @Column("image_id") val imageId: Long,
+  @Column("image_title") val imageTitle: String,
+  @Column("language_code") val languageCode: String,
+  @Column("language_name") val languageName: String) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0, 0, "","","")
 }

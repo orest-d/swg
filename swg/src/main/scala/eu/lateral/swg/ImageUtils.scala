@@ -37,7 +37,7 @@ object ImageUtils {
       new BufferedImage(width, height, imagetype)
     else
       new BufferedImage(rw.toInt, rh.toInt, imagetype)
-    
+
     val g = resizedImage.createGraphics()
     g.setComposite(AlphaComposite.Src)
     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
@@ -48,7 +48,7 @@ object ImageUtils {
       g.drawImage(originalImage, x.toInt, y.toInt, rw.toInt, rh.toInt, null)
     else
       g.drawImage(originalImage, 0, 0, rw.toInt, rh.toInt, null)
-    
+
     g.dispose()
     val out = new ByteArrayOutputStream
     ImageIO.write(resizedImage, format, out)
@@ -64,16 +64,21 @@ object ImageUtils {
       transaction {
         val image = toByteArray(child)
         SWGSchema.images.insert(new ImageRecord(
-            id = 0,
-            projectId = project.id,
-            imageNumber = project.maxImageNumber + 1,
-            sourceURL = child.getName.getURI,
-            relativePath = relativeName,
-            originalImage = image,
-            bigImage = resize(image, project.imageWidth, project.imageHeight, "jpg",false),
-            bigImageFormat = "jpg",
-            thumbnailImage = resize(image, project.thumbnailWidth, project.thumbnailHeight, "png",true),
-            thumbnailFormat = "png"))
+          id = 0,
+          projectId = project.id,
+          imageNumber = project.maxImageNumber + 1,
+          sourceURL = child.getName.getURI,
+          relativePath = relativeName,
+          technique = 0,
+          author = "",
+          inception = "",
+          width = 0.0,
+          height = 0.0,
+          originalImage = image,
+          bigImage = resize(image, project.imageWidth, project.imageHeight, "jpg", false),
+          bigImageFormat = "jpg",
+          thumbnailImage = resize(image, project.thumbnailWidth, project.thumbnailHeight, "png", true),
+          thumbnailFormat = "png"))
       }
     }
   }
