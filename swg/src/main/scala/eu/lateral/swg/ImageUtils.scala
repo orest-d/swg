@@ -69,7 +69,7 @@ object ImageUtils {
           imageNumber = project.maxImageNumber + 1,
           sourceURL = child.getName.getURI,
           relativePath = relativeName,
-          technique = 0,
+          techniqueId = 0,
           author = "",
           inception = "",
           width = 0.0,

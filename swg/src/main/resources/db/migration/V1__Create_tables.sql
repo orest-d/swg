@@ -132,10 +132,10 @@ WHERE (
   articles.article_number=article_texts.article_number
 );
 
-CREATE TABLE technique(
+CREATE TABLE techniques(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  key                 VARCHAR(255) NOT NULL,
-  UNIQUE(key)
+  technique_key       VARCHAR(255) NOT NULL,
+  UNIQUE(technique_key)
 );
 
 CREATE TABLE technique_translations(
@@ -143,10 +143,22 @@ CREATE TABLE technique_translations(
   language_id         BIGINT NOT NULL,
   technique_id        BIGINT NOT NULL,
   technique_name      VARCHAR(255),
-  FOREIGN KEY (technique_id) REFERENCES technique(id) ON DELETE CASCADE,  
+  FOREIGN KEY (technique_id) REFERENCES techniques(id) ON DELETE CASCADE,  
   FOREIGN KEY (language_id) REFERENCES languages(id) ON DELETE CASCADE,
   UNIQUE(language_id,technique_id)
 );
+
+CREATE VIEW techniques_view AS
+SELECT 
+  technique_translations.id AS id,
+  technique_translations.language_id AS language_id,
+  technique_translations.technique_id AS technique_id,
+  technique_translations.technique_name AS technique_name,
+  technique_key,
+  language_code,
+  language_name
+FROM technique_translations, languages, techniques
+WHERE (technique_translations.language_id=languages.id AND techniques.id = technique_translations.technique_id);
 
 CREATE TABLE images(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -154,7 +166,7 @@ CREATE TABLE images(
   image_number        INT NOT NULL,
   source_url          VARCHAR(255),
   relative_path       VARCHAR(255),
-  technique           BIGINT,
+  technique_id        BIGINT,
   author              VARCHAR(255) NOT NULL DEFAULT '',
   inception           VARCHAR(255) NOT NULL DEFAULT '',
   width               REAL NOT NULL DEFAULT 0.0,
@@ -197,9 +209,9 @@ INSERT INTO languages (id,language_code,language_name) VALUES (1,'en','English')
 INSERT INTO languages (id,language_code,language_name) VALUES (2,'sk','Slovensky'); 
 INSERT INTO languages (id,language_code,language_name) VALUES (3,'de','Deutsch');
 
-INSERT INTO technique (id,key) VALUES (1,'copmuter graphics');
-INSERT INTO technique (id,key) VALUES (2,'oil painting');
-INSERT INTO technique (id,key) VALUES (3,'pastel');
+INSERT INTO techniques (id,technique_key) VALUES (1,'copmuter graphics');
+INSERT INTO techniques (id,technique_key) VALUES (2,'oil painting');
+INSERT INTO techniques (id,technique_key) VALUES (3,'pastel');
 
 INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,1, 'copmuter graphics');
 INSERT INTO technique_translations (language_id,technique_id,technique_name) VALUES (1,2, 'počítačová grafika');

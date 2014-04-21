@@ -33,7 +33,10 @@ object SWGSchema extends Schema {
   val images = table[ImageRecord]("images")
   val imageTranslations = table[ImageTranslation]("image_translations")
   val imagesView = table[ImageView]("images_view")
-  
+  val techniques = table[Technique]("techniques")
+  val techniqueTranslations = table[TechniqueTranslation]("technique_translations")
+  val techniquesView = table[TechniqueView]("techniques_view")
+
   val menu=table[Menu]("menu")
 
   val projectToLanguages =

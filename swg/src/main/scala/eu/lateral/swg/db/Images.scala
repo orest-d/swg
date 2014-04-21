@@ -26,7 +26,7 @@ class ImageRecord(
   @Column("image_number") val imageNumber: Int,
   @Column("source_url") val sourceURL: String,
   @Column("relative_path") val relativePath: String,
-  @Column("technique") val technique: Long,
+  @Column("technique_id") val techniqueId: Long,
   @Column("author") val author: String,
   @Column("inception") val inception: String,
   @Column("width") val width: Double,
@@ -40,6 +40,11 @@ class ImageRecord(
   def translations = {
     inTransaction {
       from(SWGSchema.imagesView)(x => where(id === x.imageId) select (x))
+    }
+  }
+  def technique = {
+    inTransaction {
+      from(SWGSchema.techniques)(x => where(techniqueId === x.id) select (x))
     }
   }
 }
