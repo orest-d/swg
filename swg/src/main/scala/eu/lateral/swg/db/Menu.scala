@@ -26,12 +26,20 @@ class Menu(
   @Column("project_id") val projectId: Long,
   @Column("menu_number") val menuNumber: Int,
   @Column("menu_level") val menuLevel: Int,
-  @Column("article_number") val articleNumber: Option[Int]) extends KeyedEntity[Long] {
-  def this() = this(0, 0, 0, 0, None)
+  @Column("article_number") val articleNumber: Option[Int],
+  @Column("gallery_number") val galleryNumber: Option[Int]) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0, 0, None, None)
   def article = {
     inTransaction {
       if (articleNumber.isDefined) {
-        from(SWGSchema.articles)(a => where((a.projectId === projectId).and(a.articleNumber === articleNumber))select(a)).headOption
+        from(SWGSchema.articles)(a => where((a.projectId === projectId).and(a.articleNumber === articleNumber)) select (a)).headOption
+      } else None
+    }
+  }
+  def gallery = {
+    inTransaction {
+      if (galleryNumber.isDefined) {
+        from(SWGSchema.galleries)(a => where((a.projectId === projectId).and(a.galleryNumber === galleryNumber)) select (a)).headOption
       } else None
     }
   }

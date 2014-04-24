@@ -1,10 +1,17 @@
 -- Create tables
+
+--------------------------------------------------------------------------------
+-- LANGUAGES
+--------------------------------------------------------------------------------
 CREATE TABLE languages(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   language_code       VARCHAR(32) NOT NULL UNIQUE,
   language_name       VARCHAR(255) NOT NULL
 );
 
+--------------------------------------------------------------------------------
+-- PROJECTS
+--------------------------------------------------------------------------------
 CREATE TABLE projects (
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_name        VARCHAR(255) NOT NULL,
@@ -15,6 +22,9 @@ CREATE TABLE projects (
   default_language_id BIGINT,  
 );
 
+--------------------------------------------------------------------------------
+-- PROJECT LANGUAGES
+--------------------------------------------------------------------------------
 CREATE TABLE project_languages(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
@@ -33,6 +43,9 @@ SELECT
 FROM project_languages, languages
 WHERE  project_languages.language_id = languages.id;
 
+--------------------------------------------------------------------------------
+-- SITE INFO
+--------------------------------------------------------------------------------
 CREATE TABLE siteinfo(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
@@ -57,6 +70,9 @@ SELECT
 FROM siteinfo, projects, project_languages_view
 WHERE projects.id=siteinfo.project_id AND project_language_id=project_languages_view.id;
 
+--------------------------------------------------------------------------------
+-- TRANSLATIONS
+--------------------------------------------------------------------------------
 CREATE TABLE translations(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
@@ -80,16 +96,23 @@ SELECT
 FROM translations, project_languages_view
 WHERE project_language_id=project_languages_view.id;
 
+--------------------------------------------------------------------------------
+-- MENU
+--------------------------------------------------------------------------------
 CREATE TABLE menu(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
   menu_number         INT,
   menu_level          INT,
   article_number      INT,
+  gallery_number      INT,
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   UNIQUE(project_id, menu_number)
 );
 
+--------------------------------------------------------------------------------
+-- ARTICLES
+--------------------------------------------------------------------------------
 CREATE TABLE articles(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
@@ -104,9 +127,9 @@ CREATE TABLE article_texts(
   project_id          BIGINT NOT NULL,
   project_language_id BIGINT NOT NULL,
   article_number      INT NOT NULL,
-  article_link_title  VARCHAR(255),
-  article_title       VARCHAR(255),
-  article_text        CLOB,
+  article_link_title  VARCHAR(255) NOT NULL DEFAULT '',
+  article_title       VARCHAR(255) NOT NULL DEFAULT '',
+  article_text        CLOB NOT NULL DEFAULT '',
   FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
   FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
   UNIQUE(project_id, project_language_id, article_number)
@@ -132,6 +155,9 @@ WHERE (
   articles.article_number=article_texts.article_number
 );
 
+--------------------------------------------------------------------------------
+-- TECHNIQUES
+--------------------------------------------------------------------------------
 CREATE TABLE techniques(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   technique_key       VARCHAR(255) NOT NULL,
@@ -160,6 +186,9 @@ SELECT
 FROM technique_translations, languages, techniques
 WHERE (technique_translations.language_id=languages.id AND techniques.id = technique_translations.technique_id);
 
+--------------------------------------------------------------------------------
+-- IMAGES
+--------------------------------------------------------------------------------
 CREATE TABLE images(
   id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   project_id          BIGINT NOT NULL,
@@ -204,7 +233,64 @@ SELECT
 FROM image_translations, project_languages_view
 WHERE (project_language_id=project_languages_view.id);
 
+--------------------------------------------------------------------------------
+-- GALLERIES
+--------------------------------------------------------------------------------
+CREATE TABLE galleries(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT NOT NULL,
+  gallery_number      INT NOT NULL,
+  publish             BOOLEAN NOT NULL,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  UNIQUE(project_id, gallery_number)
+);
+
+CREATE TABLE gallery_texts(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  project_id          BIGINT NOT NULL,
+  project_language_id BIGINT NOT NULL,
+  gallery_number      INT NOT NULL,
+  gallery_link_title  VARCHAR(255) NOT NULL DEFAULT '',
+  gallery_title       VARCHAR(255) NOT NULL DEFAULT '',
+  gallery_text        CLOB NOT NULL DEFAULT '',
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,  
+  FOREIGN KEY (project_language_id) REFERENCES project_languages(id) ON DELETE CASCADE,
+  UNIQUE(project_id, project_language_id, gallery_number)
+);
+
+CREATE VIEW galleries_view AS
+SELECT 
+  gallery_texts.id AS id,
+  galleries.id AS gallery_id,
+  galleries.project_id AS project_id,
+  project_language_id,
+  galleries.gallery_number AS gallery_number,
+  gallery_link_title,
+  gallery_title,
+  gallery_text,
+  publish,
+  language_code,
+  language_name
+FROM galleries, gallery_texts, project_languages_view
+WHERE (
+  project_language_id=project_languages_view.id AND
+  galleries.project_id=gallery_texts.project_id AND
+  galleries.gallery_number=gallery_texts.gallery_number
+);
+
+CREATE TABLE gallery_image_relations(
+  id                  BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  gallery_id          BIGINT NOT NULL,
+  image_id            BIGINT NOT NULL,
+  FOREIGN KEY (gallery_id) REFERENCES galleries(id) ON DELETE CASCADE,  
+  FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,  
+);
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Create default project settings
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 INSERT INTO languages (id,language_code,language_name) VALUES (1,'en','English'); 
 INSERT INTO languages (id,language_code,language_name) VALUES (2,'sk','Slovensky'); 
 INSERT INTO languages (id,language_code,language_name) VALUES (3,'de','Deutsch');

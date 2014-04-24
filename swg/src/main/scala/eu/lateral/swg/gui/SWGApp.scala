@@ -72,7 +72,7 @@ class SWGApp extends UserInterface with StatusMonitor {
     }
   }
   override def deploy() = {
-    val url = urlFromPath("www1")
+    val url = urlFromPath("www")
     SessionManager.initializeDatabase()
     val f = future {
       val g = new Generator

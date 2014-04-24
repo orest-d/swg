@@ -42,7 +42,7 @@ class Generator {
     save(siteinfo(project), destination, "data/siteinfo.json", monitor)
     save(translations(project), destination, "data/translation.json", monitor)
     save(imagesJson(project), destination, "data/images.json", monitor)
-    save(galleriesJson(project), destination, "data/galleries.json", monitor)    
+    save(galleriesJson(project), destination, "data/galleries.json", monitor)
     save(menu(project, monitor), destination, "pages/menu.html", monitor)
 
     transaction {
@@ -121,13 +121,13 @@ class Generator {
       val tr = (for (t <- trans; if (t.translationName == name)) yield s"$q${t.languageCode}$q:$q{t.translation}$q").mkString(",")
       "\"" + name + "\"{" + tr + "}"
     }
-    val techniques=for(technique <- from(SWGSchema.techniques)(x => select(x))) yield {
-      val translations = for (trans <- technique.translations) yield{
-        "\""+trans.languageCode+"\":\""+trans.techniqueName+"\""
+    val techniques = for (technique <- from(SWGSchema.techniques)(x => select(x))) yield {
+      val translations = for (trans <- technique.translations) yield {
+        "\"" + trans.languageCode + "\":\"" + trans.techniqueName + "\""
       }
-      "\""+technique.techniqueKey +"\":{"+translations.mkString(",\n")+"}"
+      "\"" + technique.techniqueKey + "\":{" + translations.mkString(",\n") + "}"
     }
-    
+
     val alltrans = trtext.toList ::: techniques.toList
     "{" + alltrans.mkString(",\n") + "}"
   }
@@ -159,11 +159,18 @@ class Generator {
         val level = 1 max menu.menuLevel
         val previousLevel = if (index == 0) 0 else 1 max projectMenu(index - 1).menuLevel
         val article = menu.article
+        val gallery = menu.gallery
         if (article.isDefined) {
           val articleInLanguage = article.get.texts.filter(x => x.projectLanguageId == language.id).headOption
           val title = if (articleInLanguage.isDefined) articleInLanguage.get.articleLinkTitle else "unknown"
           val link = s"#/article/${menu.articleNumber.get}"
           levelTransition(previousLevel, level) + menuLink(title, link, level)
+        } else if (gallery.isDefined) {
+          val galleryInLanguage = gallery.get.texts.filter(x => x.projectLanguageId == language.id).headOption
+          val title = if (galleryInLanguage.isDefined) galleryInLanguage.get.galleryLinkTitle else "unknown"
+          val link = s"#/gallery/${menu.galleryNumber.get}"
+          levelTransition(previousLevel, level) + menuLink(title, link, level)
+
         } else {
           monitor.error(s"Undefined menu ${menu.menuNumber}")
           levelTransition(previousLevel, level) + s"\n<!-- Undefined menu ${menu.menuNumber} -->\n"
@@ -178,9 +185,23 @@ class Generator {
 
   def galleriesJson(project: Project) = transaction {
     val all = allImagesGalleryJson(project)
+    val galleries = for (gallery <- project.galleries) yield {
+      val images = gallery.images.map(x => x.imageNumber.toString).mkString(",")
+      val galleryNumber = gallery.galleryNumber
+      val name = gallery.texts.map(x => s""""${x.languageCode}":"${x.galleryTitle}"""").mkString(",")
+      val text = gallery.texts.map(x => s""""${x.languageCode}":"${x.galleryText}"""").mkString(",")
+      s"""|  "$galleryNumber":{
+          |    "name":{$name},
+          |    "text":{$text},
+          |    "images":[$images]
+          |  }""".stripMargin
+    }
+    val optionalComma = if (galleries.isEmpty) "" else ","
+    val galleriesText=galleries.mkString(",\n")
     s"""{
        |  "all":$all,
-       |  "default":$all
+       |  "default":$all$optionalComma
+       |$galleriesText
        |}""".stripMargin
   }
 
