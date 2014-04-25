@@ -2,10 +2,10 @@
     <h1>{{galleryName()}}</h1>
     <div>{{galleryText()}}</div>
     <div class="row">
-        <div class="col-lg-2 col-md-4 col-sm-6" ng-repeat="image in selectedImages()">
+        <div class="col-lg-2 col-md-3 col-sm-4 col-xs-6" ng-repeat="image in selectedImages()">
             <div class="thumbnail">
                 <a href="#/image/{{galleryId}}/{{image.imageNr}}"><img ng-src="{{image.thumbnailUrl}}"/></a>
-                <div class="caption">
+                <div class="caption legend">
                     <a href="#/image/{{galleryId}}/{{image.imageNr}}">{{image.translatedName}}</a>
                 </div>
             </div>

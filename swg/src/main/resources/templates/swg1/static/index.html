@@ -26,7 +26,7 @@
     <body>
         <div class="container-fluid">
             <div class="row-fluid">
-                <div class="list-group col-lg-2 col-md-4 col-sm-6">                    
+                <div class="list-group col-lg-2 col-md-4 col-sm-4 col-xs-12">
                     <select class="selectpicker list-group-item col-lg-12 col-md-12 col-sm-12" ng-model="language" ng-options="lang for lang in languages"></select>
                     <a href="#" class="list-group-item active">
                         {{menutitle()}}
@@ -34,7 +34,7 @@
                     <div ng-include="'pages/menu.html'"></div>
                 </div>
 
-                <div class="view-container col-lg-10 col-md-8 col-sm-6">
+                <div class="view-container col-lg-10 col-md-8 col-sm-8 col-xs-12">
                     <div ng-view class="view-frame"></div>
                 </div>
             </div>

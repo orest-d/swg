@@ -11,3 +11,7 @@ h1 {
 .language {
     z-index: -1;
 }
+
+.legend {
+    height:55px;
+}
