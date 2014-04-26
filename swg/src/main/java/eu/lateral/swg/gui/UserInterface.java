@@ -42,6 +42,12 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 
 public class UserInterface {
 	public Display display;
@@ -53,6 +59,23 @@ public class UserInterface {
 	public ProgressBar progressBar;
 	public Text titleText;
 	public Text menuTitleText;
+	private Text text_1;
+	private Text text_2;
+	private Text text_3;
+	private Text text_4;
+	private Text text_5;
+	private Text text_6;
+	private Text text_7;
+	private Text text_8;
+	private Text text_9;
+	private Text text_10;
+	private Text text_11;
+	private Text text_12;
+	private Text text_13;
+	private Text text_14;
+	private Text text_15;
+	private Text text_16;
+	private Table table;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -60,7 +83,7 @@ public class UserInterface {
 	public int createUI() {
 		Display display = new Display();
 		Shell mainShell = new Shell(display, SWT.RESIZE | SWT.TITLE);
-		mainShell.setSize(547, 486);
+		mainShell.setSize(670, 488);
 		mainShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
 					System.exit(0);
@@ -80,13 +103,15 @@ public class UserInterface {
 		composite.setLayout(new GridLayout(3, false));
 		
 		languageCombo = new Combo(composite, SWT.NONE);
+		GridData gd_languageCombo = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+		gd_languageCombo.widthHint = 202;
+		languageCombo.setLayoutData(gd_languageCombo);
 		languageCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				languageChanged();
 			}
 		});
-		languageCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Button deployButton = new Button(composite, SWT.NONE);
 		deployButton.addSelectionListener(new SelectionAdapter() {
@@ -179,6 +204,265 @@ public class UserInterface {
 		gd_btnOk.widthHint = 94;
 		btnOk.setLayoutData(gd_btnOk);
 		btnOk.setText("OK");
+		
+		TabItem tbtmArticle = new TabItem(tabFolder, SWT.NONE);
+		tbtmArticle.setText("Article");
+		
+		Composite composite_3 = new Composite(tabFolder, SWT.NONE);
+		tbtmArticle.setControl(composite_3);
+		composite_3.setLayout(new GridLayout(4, false));
+		
+		Button btnNew = new Button(composite_3, SWT.NONE);
+		btnNew.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNew.setText("New");
+		
+		Button btnDelete_1 = new Button(composite_3, SWT.NONE);
+		btnDelete_1.setText("Delete");
+		
+		Combo combo = new Combo(composite_3, SWT.NONE);
+		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		
+		Label lblTitle_1 = new Label(composite_3, SWT.NONE);
+		lblTitle_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTitle_1.setText("Title:");
+		
+		text_5 = new Text(composite_3, SWT.BORDER);
+		text_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		
+		Label lblMenuLink = new Label(composite_3, SWT.NONE);
+		lblMenuLink.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblMenuLink.setText("Menu link:");
+		
+		text_6 = new Text(composite_3, SWT.BORDER);
+		GridData gd_text_6 = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_text_6.widthHint = 164;
+		text_6.setLayoutData(gd_text_6);
+		
+		Button btnShowInMenu = new Button(composite_3, SWT.CHECK);
+		btnShowInMenu.setText("Show in menu");
+		
+		StyledText styledText = new StyledText(composite_3, SWT.BORDER);
+		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		gd_styledText.widthHint = 509;
+		styledText.setLayoutData(gd_styledText);
+		
+		TabItem tbtmImage = new TabItem(tabFolder, SWT.NONE);
+		tbtmImage.setText("Image");
+		
+		Composite composite_4 = new Composite(tabFolder, SWT.NONE);
+		tbtmImage.setControl(composite_4);
+		composite_4.setLayout(new GridLayout(3, false));
+		
+		List list_1 = new List(composite_4, SWT.BORDER);
+		list_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 7));
+		
+		Label lblTitle_2 = new Label(composite_4, SWT.NONE);
+		lblTitle_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTitle_2.setText("Title:");
+		
+		text_9 = new Text(composite_4, SWT.BORDER);
+		text_9.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblAuthor = new Label(composite_4, SWT.NONE);
+		lblAuthor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblAuthor.setText("Author:");
+		
+		text_13 = new Text(composite_4, SWT.BORDER);
+		text_13.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblTechnique = new Label(composite_4, SWT.NONE);
+		lblTechnique.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTechnique.setText("Technique:");
+		
+		Combo combo_1 = new Combo(composite_4, SWT.NONE);
+		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblWidth_2 = new Label(composite_4, SWT.NONE);
+		lblWidth_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblWidth_2.setText("Width:");
+		
+		text_10 = new Text(composite_4, SWT.BORDER);
+		text_10.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblHeight_2 = new Label(composite_4, SWT.NONE);
+		lblHeight_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblHeight_2.setText("Height:");
+		
+		text_11 = new Text(composite_4, SWT.BORDER);
+		text_11.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblInception = new Label(composite_4, SWT.NONE);
+		lblInception.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblInception.setText("Inception:");
+		
+		text_12 = new Text(composite_4, SWT.BORDER);
+		text_12.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Canvas canvas = new Canvas(composite_4, SWT.NONE);
+		canvas.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		
+		TabItem tbtmImageSize = new TabItem(tabFolder, SWT.NONE);
+		tbtmImageSize.setText("Image Attributes");
+		
+		Composite composite_2 = new Composite(tabFolder, SWT.NONE);
+		tbtmImageSize.setControl(composite_2);
+		composite_2.setLayout(new GridLayout(6, false));
+		
+		Label lblThumbnails = new Label(composite_2, SWT.NONE);
+		lblThumbnails.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		lblThumbnails.setText("Thumbnails:");
+		
+		Label label_1 = new Label(composite_2, SWT.SEPARATOR | SWT.VERTICAL);
+		GridData gd_label_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 7);
+		gd_label_1.widthHint = -52;
+		label_1.setLayoutData(gd_label_1);
+		
+		Label lblNewLabel = new Label(composite_2, SWT.NONE);
+		lblNewLabel.setText("Techniques:");
+		new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
+		
+		Label lblWidth = new Label(composite_2, SWT.NONE);
+		lblWidth.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblWidth.setText("Width:");
+		
+		text_1 = new Text(composite_2, SWT.BORDER);
+		text_1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblNewLabel_1 = new Label(composite_2, SWT.NONE);
+		lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblNewLabel_1.setText("Key:");
+		
+		text_7 = new Text(composite_2, SWT.BORDER);
+		text_7.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		
+		Label lblHeight = new Label(composite_2, SWT.NONE);
+		lblHeight.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblHeight.setText("Height:");
+		
+		text_2 = new Text(composite_2, SWT.BORDER);
+		text_2.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblName = new Label(composite_2, SWT.NONE);
+		lblName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblName.setText("Name:");
+		
+		text_8 = new Text(composite_2, SWT.BORDER);
+		text_8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		
+		Label label = new Label(composite_2, SWT.SEPARATOR | SWT.HORIZONTAL);
+		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		new Label(composite_2, SWT.NONE);
+		
+		Button btnNew_1 = new Button(composite_2, SWT.NONE);
+		btnNew_1.setText("New");
+		
+		Button btnDelete = new Button(composite_2, SWT.NONE);
+		btnDelete.setText("Delete");
+		
+		Label lblImage = new Label(composite_2, SWT.NONE);
+		lblImage.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
+		lblImage.setText("Image:");
+		
+		List list = new List(composite_2, SWT.BORDER);
+		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 3, 3));
+		
+		Label lblWidth_1 = new Label(composite_2, SWT.NONE);
+		lblWidth_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblWidth_1.setText("Width:");
+		
+		text_3 = new Text(composite_2, SWT.BORDER);
+		text_3.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblHeight_1 = new Label(composite_2, SWT.NONE);
+		lblHeight_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblHeight_1.setText("Height:");
+		
+		text_4 = new Text(composite_2, SWT.BORDER);
+		text_4.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
+		
+		TabItem tbtmMenu = new TabItem(tabFolder, SWT.NONE);
+		tbtmMenu.setText("Menu");
+		
+		Composite composite_5 = new Composite(tabFolder, SWT.NONE);
+		tbtmMenu.setControl(composite_5);
+		composite_5.setLayout(new GridLayout(5, false));
+		
+		table = new Table(composite_5, SWT.BORDER | SWT.FULL_SELECTION);
+		GridData gd_table = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 4);
+		gd_table.widthHint = 173;
+		gd_table.heightHint = 230;
+		table.setLayoutData(gd_table);
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		
+		TableColumn tblclmnLink = new TableColumn(table, SWT.NONE);
+		tblclmnLink.setWidth(100);
+		tblclmnLink.setText("Link");
+		
+		TableColumn tblclmnType = new TableColumn(table, SWT.NONE);
+		tblclmnType.setWidth(100);
+		tblclmnType.setText("Type");
+		
+		Browser browser = new Browser(composite_5, SWT.NONE);
+		GridData gd_browser = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 4);
+		gd_browser.heightHint = 264;
+		gd_browser.widthHint = 170;
+		browser.setLayoutData(gd_browser);
+		
+		Label lblTitle_3 = new Label(composite_5, SWT.NONE);
+		lblTitle_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTitle_3.setText("Title:");
+		
+		text_14 = new Text(composite_5, SWT.BORDER);
+		text_14.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		
+		Label lblLevel = new Label(composite_5, SWT.NONE);
+		lblLevel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblLevel.setText("Level:");
+		
+		Spinner spinner = new Spinner(composite_5, SWT.BORDER);
+		GridData gd_spinner = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_spinner.widthHint = 118;
+		spinner.setLayoutData(gd_spinner);
+		
+		Button btnUp = new Button(composite_5, SWT.NONE);
+		GridData gd_btnUp = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnUp.widthHint = 83;
+		btnUp.setLayoutData(gd_btnUp);
+		btnUp.setText("Up");
+		new Label(composite_5, SWT.NONE);
+		new Label(composite_5, SWT.NONE);
+		
+		Button btnDown = new Button(composite_5, SWT.NONE);
+		GridData gd_btnDown = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnDown.widthHint = 83;
+		btnDown.setLayoutData(gd_btnDown);
+		btnDown.setText("Down");
+		new Label(composite_5, SWT.NONE);
+		new Label(composite_5, SWT.NONE);
+		new Label(composite_5, SWT.NONE);
+		
+		TabItem tbtmGallery = new TabItem(tabFolder, SWT.NONE);
+		tbtmGallery.setText("Gallery");
+		
+		Composite composite_6 = new Composite(tabFolder, SWT.NONE);
+		tbtmGallery.setControl(composite_6);
+		composite_6.setLayout(new GridLayout(2, false));
+		
+		Label lblTitle_4 = new Label(composite_6, SWT.NONE);
+		lblTitle_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblTitle_4.setText("Title:");
+		
+		text_15 = new Text(composite_6, SWT.BORDER);
+		text_15.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		Label lblLink = new Label(composite_6, SWT.NONE);
+		lblLink.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblLink.setText("Link:");
+		
+		text_16 = new Text(composite_6, SWT.BORDER);
+		text_16.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		statusLabel = new Label(composite, SWT.NONE);
 		statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
