@@ -59,23 +59,25 @@ public class UserInterface {
 	public ProgressBar progressBar;
 	public Text titleText;
 	public Text menuTitleText;
-	private Text text_1;
-	private Text text_2;
-	private Text text_3;
-	private Text text_4;
-	private Text text_5;
-	private Text text_6;
-	private Text text_7;
-	private Text text_8;
-	private Text text_9;
-	private Text text_10;
-	private Text text_11;
-	private Text text_12;
-	private Text text_13;
-	private Text text_14;
-	private Text text_15;
-	private Text text_16;
-	private Table table;
+	public Text text_1;
+	public Text text_2;
+	public Text text_3;
+	public Text text_4;
+	public Combo selectArticleCombo;
+	public Text articleTitleText;
+	public Text articleLinkText;
+	public StyledText articleText;
+	public Text text_7;
+	public Text text_8;
+	public Text text_9;
+	public Text text_10;
+	public Text text_11;
+	public Text text_12;
+	public Text text_13;
+	public Text text_14;
+	public Text text_15;
+	public Text text_16;
+	public Table table;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -212,39 +214,45 @@ public class UserInterface {
 		tbtmArticle.setControl(composite_3);
 		composite_3.setLayout(new GridLayout(4, false));
 		
-		Button btnNew = new Button(composite_3, SWT.NONE);
-		btnNew.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnNew.setText("New");
+		Button newArticleButton = new Button(composite_3, SWT.NONE);
+		newArticleButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		newArticleButton.setText("New");
 		
-		Button btnDelete_1 = new Button(composite_3, SWT.NONE);
-		btnDelete_1.setText("Delete");
+		Button deleteArticleButton = new Button(composite_3, SWT.NONE);
+		deleteArticleButton.setText("Delete");
 		
-		Combo combo = new Combo(composite_3, SWT.NONE);
-		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		selectArticleCombo = new Combo(composite_3, SWT.NONE);
+		selectArticleCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				articleChanged();
+			}
+		});
+		selectArticleCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		
 		Label lblTitle_1 = new Label(composite_3, SWT.NONE);
 		lblTitle_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTitle_1.setText("Title:");
 		
-		text_5 = new Text(composite_3, SWT.BORDER);
-		text_5.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		articleTitleText = new Text(composite_3, SWT.BORDER);
+		articleTitleText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		Label lblMenuLink = new Label(composite_3, SWT.NONE);
 		lblMenuLink.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMenuLink.setText("Menu link:");
 		
-		text_6 = new Text(composite_3, SWT.BORDER);
-		GridData gd_text_6 = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-		gd_text_6.widthHint = 164;
-		text_6.setLayoutData(gd_text_6);
+		articleLinkText = new Text(composite_3, SWT.BORDER);
+		GridData gd_articleLinkText = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_articleLinkText.widthHint = 164;
+		articleLinkText.setLayoutData(gd_articleLinkText);
 		
-		Button btnShowInMenu = new Button(composite_3, SWT.CHECK);
-		btnShowInMenu.setText("Show in menu");
+		Button articleShowInMenuButton = new Button(composite_3, SWT.CHECK);
+		articleShowInMenuButton.setText("Show in menu");
 		
-		StyledText styledText = new StyledText(composite_3, SWT.BORDER);
-		GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
-		gd_styledText.widthHint = 509;
-		styledText.setLayoutData(gd_styledText);
+		articleText = new StyledText(composite_3, SWT.BORDER);
+		GridData gd_articleText = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		gd_articleText.widthHint = 509;
+		articleText.setLayoutData(gd_articleText);
 		
 		TabItem tbtmImage = new TabItem(tabFolder, SWT.NONE);
 		tbtmImage.setText("Image");
@@ -484,6 +492,9 @@ public class UserInterface {
 		
 	}
 	public void siteInfoUpdated(){
+		
+	}
+	public void articleChanged(){
 		
 	}
 	public void setStatus(String text){

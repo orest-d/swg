@@ -8,17 +8,18 @@
 
  MathMaster is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
- along with SWG.  If not, see <http://www.gnu.org/licenses/>.
+ along with SWG. If not, see <http://www.gnu.org/licenses/>.
  */
 package eu.lateral.swg.gui
 import eu.lateral.swg.db.Language
 import eu.lateral.swg.db.Project
 import eu.lateral.swg.Generator
 import eu.lateral.swg.StatusMonitor
+import eu.lateral.swg.db.ProjectLanguage
 import eu.lateral.swg.db.SWGSchema
 import eu.lateral.swg.db.SessionManager
 import eu.lateral.swg.utils._
@@ -78,19 +79,37 @@ class SWGApp extends UserInterface with StatusMonitor {
       val g = new Generator
       g.deploy(project, url, this)
     }
-    f.onSuccess{case _ =>info("OK")}
-    f.onFailure{case t =>error(t)}        
+    f.onSuccess { case _ => info("OK") }
+    f.onFailure { case t => error(t) }
+  }
+
+  def updateDefaultLanguages() {
+    val languages = allLanguages.map(_.languageName).toArray
+    defaultLanguageCombo.setItems(languages)
+    if (languages.length > 0) {
+      defaultLanguageCombo.select(0)
+    }
+    for (defaultLanguageCode <- project.defaultLanguageCode) {
+      defaultLanguageCombo.select(0 max allLanguages.indexWhere(_.languageCode == defaultLanguageCode))
+    }
   }
   override def loadDataIntoSiteInfo() {
     transaction {
       val ssi = selectedSiteInfo
       for (info <- ssi) {
+        println(s"Selected ${info.languageName} -> ${info.title}")
         titleText.setText(info.title)
         menuTitleText.setText(info.menuTitle)
         if (!ssi.isDefined) {
           titleText.setText("")
           menuTitleText.setText("")
         }
+      }
+      updateDefaultLanguages()
+      siteLanguagesList.setItems(allLanguages.map(_.languageName).toArray)
+      siteLanguagesList.deselectAll
+      for ((lang, i) <- allLanguages.zipWithIndex; if (project.languages.map(_.languageId).toSeq.contains(lang.id))) {
+        siteLanguagesList.select(i)
       }
     }
   }
@@ -104,7 +123,50 @@ class SWGApp extends UserInterface with StatusMonitor {
               x.title := titleText.getText,
               x.menuTitle := menuTitleText.getText))
       }
+      val defaultLanguage = allLanguages(0 max defaultLanguageCombo.getSelectionIndex)
+      update(SWGSchema.projects)(x => where(x.id === project.id) set (x.defaultLanguageId := defaultLanguage.id))
+
+      for (languageIndex <- siteLanguagesList.getSelectionIndices) {
+        val language = allLanguages(languageIndex)
+        if (!project.languages.toList.map(_.languageCode).contains(language.languageCode)) {
+          SWGSchema.projectLanguages.insert(new ProjectLanguage(0, project.id, language.id))
+        }
+      }
+      updateDefaultLanguages()
     }
+  }
+
+  def selectedArticles = {
+    inTransaction {
+      val ssi = selectedSiteInfo
+      for (
+        info <- ssi.toList;
+        article <- from(SWGSchema.articlesView)(x => where(
+          (x.languageCode === info.languageCode).and(x.projectId === info.projectId))
+          select (x))
+      ) yield article
+    }
+  }
+  def loadDataIntoArticleSelector() {
+    val selected = 0 max selectArticleCombo.getSelectionIndex
+    val articles = selectedArticles.map(_.articleTitle).toArray
+    selectArticleCombo.setItems(articles)
+    if (articles.length>0){
+      selectArticleCombo.select(selected)
+    }
+  }
+  def loadDataIntoArticle() {
+    val selected = 0 max selectArticleCombo.getSelectionIndex
+    val articles = selectedArticles
+    if (articles.isDefinedAt(selected)){
+      val article = articles(selected)
+      articleTitleText.setText(article.articleTitle)
+      articleLinkText.setText(article.articleLinkTitle)
+      articleText.setText(article.articleText)
+    }
+  }
+  override def articleChanged(){
+    loadDataIntoArticle()
   }
   def loadAllLanguages() = {
     inTransaction {
@@ -120,14 +182,18 @@ class SWGApp extends UserInterface with StatusMonitor {
       if (languages.length > 0) {
         languageCombo.select(0)
       }
-
     }
     loadDataIntoSiteInfo
-}
-    override def languageChanged() {
-      loadDataIntoSiteInfo()
-    }
-    override def siteInfoUpdated() {
-      saveDataIntoSiteInfo()
-    }
+    loadDataIntoArticleSelector()
+    loadDataIntoArticle()
   }
+  override def languageChanged() {
+    loadDataIntoSiteInfo()
+    loadDataIntoArticleSelector()
+    loadDataIntoArticle()
+  }
+  override def siteInfoUpdated() {
+    saveDataIntoSiteInfo()
+  }
+  //  override def run() = perform
+}
