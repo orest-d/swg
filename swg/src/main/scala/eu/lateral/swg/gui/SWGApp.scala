@@ -151,21 +151,36 @@ class SWGApp extends UserInterface with StatusMonitor {
     val selected = 0 max selectArticleCombo.getSelectionIndex
     val articles = selectedArticles.map(_.articleTitle).toArray
     selectArticleCombo.setItems(articles)
-    if (articles.length>0){
+    if (articles.length > 0) {
       selectArticleCombo.select(selected)
     }
   }
   def loadDataIntoArticle() {
     val selected = 0 max selectArticleCombo.getSelectionIndex
     val articles = selectedArticles
-    if (articles.isDefinedAt(selected)){
+    if (articles.isDefinedAt(selected)) {
       val article = articles(selected)
       articleTitleText.setText(article.articleTitle)
       articleLinkText.setText(article.articleLinkTitle)
       articleText.setText(article.articleText)
     }
   }
-  override def articleChanged(){
+  def saveDataIntoArticle() {
+    val selected = 0 max selectArticleCombo.getSelectionIndex
+    val articles = selectedArticles
+    if (articles.isDefinedAt(selected)) {
+      val article = articles(selected)
+      transaction {
+        update(SWGSchema.articleTexts)(x => where(x.id === article.id)
+          set (
+            x.articleTitle := articleTitleText.getText,
+            x.articleLinkTitle := articleLinkText.getText,
+            x.articleText := articleText.getText
+          ))
+      }
+    }
+  }
+  override def articleChanged() {
     loadDataIntoArticle()
   }
   def loadAllLanguages() = {
@@ -194,6 +209,7 @@ class SWGApp extends UserInterface with StatusMonitor {
   }
   override def siteInfoUpdated() {
     saveDataIntoSiteInfo()
+    saveDataIntoArticle()
   }
   //  override def run() = perform
 }
