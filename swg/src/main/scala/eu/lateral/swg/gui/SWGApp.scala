@@ -30,7 +30,7 @@ import org.squeryl.PrimitiveTypeMode._
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-class SWGApp extends UserInterface with StatusMonitor {
+class SWGApp extends UserInterface with StatusMonitor with SiteInfoUI with ArticleUI {
   var project = Project.default
   var allLanguages = List.empty[Language]
   def runnable(perform: => Unit) = new Runnable {
@@ -64,14 +64,6 @@ class SWGApp extends UserInterface with StatusMonitor {
       statusLabel.setText(text)
     }
   }
-
-  def selectedSiteInfo = {
-    inTransaction {
-      val index = languageCombo.getSelectionIndex
-      val info = project.siteInfo.toSeq
-      if (info isDefinedAt index) Some(info(index)) else None
-    }
-  }
   override def deploy() = {
     val url = urlFromPath("www")
     SessionManager.initializeDatabase()
@@ -93,96 +85,7 @@ class SWGApp extends UserInterface with StatusMonitor {
       defaultLanguageCombo.select(0 max allLanguages.indexWhere(_.languageCode == defaultLanguageCode))
     }
   }
-  override def loadDataIntoSiteInfo() {
-    transaction {
-      val ssi = selectedSiteInfo
-      for (info <- ssi) {
-        println(s"Selected ${info.languageName} -> ${info.title}")
-        titleText.setText(info.title)
-        menuTitleText.setText(info.menuTitle)
-        if (!ssi.isDefined) {
-          titleText.setText("")
-          menuTitleText.setText("")
-        }
-      }
-      updateDefaultLanguages()
-      siteLanguagesList.setItems(allLanguages.map(_.languageName).toArray)
-      siteLanguagesList.deselectAll
-      for ((lang, i) <- allLanguages.zipWithIndex; if (project.languages.map(_.languageId).toSeq.contains(lang.id))) {
-        siteLanguagesList.select(i)
-      }
-    }
-  }
-  def saveDataIntoSiteInfo() {
-    transaction {
-      val info = selectedSiteInfo
-      if (info.isDefined) {
-        update(SWGSchema.siteInfo)(x =>
-          where(x.id === info.get.id)
-            set (
-              x.title := titleText.getText,
-              x.menuTitle := menuTitleText.getText))
-      }
-      val defaultLanguage = allLanguages(0 max defaultLanguageCombo.getSelectionIndex)
-      update(SWGSchema.projects)(x => where(x.id === project.id) set (x.defaultLanguageId := defaultLanguage.id))
 
-      for (languageIndex <- siteLanguagesList.getSelectionIndices) {
-        val language = allLanguages(languageIndex)
-        if (!project.languages.toList.map(_.languageCode).contains(language.languageCode)) {
-          SWGSchema.projectLanguages.insert(new ProjectLanguage(0, project.id, language.id))
-        }
-      }
-      updateDefaultLanguages()
-    }
-  }
-
-  def selectedArticles = {
-    inTransaction {
-      val ssi = selectedSiteInfo
-      for (
-        info <- ssi.toList;
-        article <- from(SWGSchema.articlesView)(x => where(
-          (x.languageCode === info.languageCode).and(x.projectId === info.projectId))
-          select (x))
-      ) yield article
-    }
-  }
-  def loadDataIntoArticleSelector() {
-    val selected = 0 max selectArticleCombo.getSelectionIndex
-    val articles = selectedArticles.map(_.articleTitle).toArray
-    selectArticleCombo.setItems(articles)
-    if (articles.length > 0) {
-      selectArticleCombo.select(selected)
-    }
-  }
-  def loadDataIntoArticle() {
-    val selected = 0 max selectArticleCombo.getSelectionIndex
-    val articles = selectedArticles
-    if (articles.isDefinedAt(selected)) {
-      val article = articles(selected)
-      articleTitleText.setText(article.articleTitle)
-      articleLinkText.setText(article.articleLinkTitle)
-      articleText.setText(article.articleText)
-    }
-  }
-  def saveDataIntoArticle() {
-    val selected = 0 max selectArticleCombo.getSelectionIndex
-    val articles = selectedArticles
-    if (articles.isDefinedAt(selected)) {
-      val article = articles(selected)
-      transaction {
-        update(SWGSchema.articleTexts)(x => where(x.id === article.id)
-          set (
-            x.articleTitle := articleTitleText.getText,
-            x.articleLinkTitle := articleLinkText.getText,
-            x.articleText := articleText.getText
-          ))
-      }
-    }
-  }
-  override def articleChanged() {
-    loadDataIntoArticle()
-  }
   def loadAllLanguages() = {
     inTransaction {
       allLanguages = from(SWGSchema.languages)(x => select(x)).toList

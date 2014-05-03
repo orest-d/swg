@@ -78,6 +78,7 @@ public class UserInterface {
 	public Text text_15;
 	public Text text_16;
 	public Table table;
+	private Table table_1;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -212,7 +213,7 @@ public class UserInterface {
 		
 		Composite composite_3 = new Composite(tabFolder, SWT.NONE);
 		tbtmArticle.setControl(composite_3);
-		composite_3.setLayout(new GridLayout(4, false));
+		composite_3.setLayout(new GridLayout(5, false));
 		
 		Button newArticleButton = new Button(composite_3, SWT.NONE);
 		newArticleButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -220,6 +221,9 @@ public class UserInterface {
 		
 		Button deleteArticleButton = new Button(composite_3, SWT.NONE);
 		deleteArticleButton.setText("Delete");
+		
+		Button btnConfirm = new Button(composite_3, SWT.CHECK);
+		btnConfirm.setText("Confirm");
 		
 		selectArticleCombo = new Combo(composite_3, SWT.NONE);
 		selectArticleCombo.addSelectionListener(new SelectionAdapter() {
@@ -235,14 +239,14 @@ public class UserInterface {
 		lblTitle_1.setText("Title:");
 		
 		articleTitleText = new Text(composite_3, SWT.BORDER);
-		articleTitleText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
+		articleTitleText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		
 		Label lblMenuLink = new Label(composite_3, SWT.NONE);
 		lblMenuLink.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblMenuLink.setText("Menu link:");
 		
 		articleLinkText = new Text(composite_3, SWT.BORDER);
-		GridData gd_articleLinkText = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		GridData gd_articleLinkText = new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1);
 		gd_articleLinkText.widthHint = 164;
 		articleLinkText.setLayoutData(gd_articleLinkText);
 		
@@ -250,64 +254,89 @@ public class UserInterface {
 		articleShowInMenuButton.setText("Show in menu");
 		
 		articleText = new StyledText(composite_3, SWT.BORDER);
-		GridData gd_articleText = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		GridData gd_articleText = new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1);
 		gd_articleText.widthHint = 509;
 		articleText.setLayoutData(gd_articleText);
 		
-		TabItem tbtmImage = new TabItem(tabFolder, SWT.NONE);
-		tbtmImage.setText("Image");
+		TabItem tbtmImage_1 = new TabItem(tabFolder, SWT.NONE);
+		tbtmImage_1.setText("Image");
 		
 		Composite composite_4 = new Composite(tabFolder, SWT.NONE);
-		tbtmImage.setControl(composite_4);
-		composite_4.setLayout(new GridLayout(3, false));
+		tbtmImage_1.setControl(composite_4);
+		composite_4.setLayout(new GridLayout(5, false));
 		
-		List list_1 = new List(composite_4, SWT.BORDER);
-		list_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 7));
+		Button btnNew = new Button(composite_4, SWT.NONE);
+		btnNew.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnNew.setText("New");
+		
+		Button btnDelete_1 = new Button(composite_4, SWT.NONE);
+		btnDelete_1.setText("Delete");
+		
+		Button btnConfirm_1 = new Button(composite_4, SWT.CHECK);
+		GridData gd_btnConfirm_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_btnConfirm_1.widthHint = 102;
+		btnConfirm_1.setLayoutData(gd_btnConfirm_1);
+		btnConfirm_1.setText("Confirm");
+		
+		table_1 = new Table(composite_4, SWT.BORDER | SWT.FULL_SELECTION);
+		table_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		table_1.setHeaderVisible(true);
+		table_1.setLinesVisible(true);
+		new Label(composite_4, SWT.NONE);
 		
 		Label lblTitle_2 = new Label(composite_4, SWT.NONE);
-		lblTitle_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		GridData gd_lblTitle_2 = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
+		gd_lblTitle_2.heightHint = 19;
+		lblTitle_2.setLayoutData(gd_lblTitle_2);
 		lblTitle_2.setText("Title:");
 		
 		text_9 = new Text(composite_4, SWT.BORDER);
-		text_9.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_9.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		
 		Label lblAuthor = new Label(composite_4, SWT.NONE);
 		lblAuthor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAuthor.setText("Author:");
 		
 		text_13 = new Text(composite_4, SWT.BORDER);
-		text_13.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_13.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		
 		Label lblTechnique = new Label(composite_4, SWT.NONE);
 		lblTechnique.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTechnique.setText("Technique:");
 		
 		Combo combo_1 = new Combo(composite_4, SWT.NONE);
-		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
 		
 		Label lblWidth_2 = new Label(composite_4, SWT.NONE);
 		lblWidth_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblWidth_2.setText("Width:");
 		
 		text_10 = new Text(composite_4, SWT.BORDER);
-		text_10.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_text_10 = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
+		gd_text_10.widthHint = 166;
+		text_10.setLayoutData(gd_text_10);
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
 		
 		Label lblHeight_2 = new Label(composite_4, SWT.NONE);
 		lblHeight_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblHeight_2.setText("Height:");
 		
 		text_11 = new Text(composite_4, SWT.BORDER);
-		text_11.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_11.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
 		
 		Label lblInception = new Label(composite_4, SWT.NONE);
 		lblInception.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblInception.setText("Inception:");
 		
 		text_12 = new Text(composite_4, SWT.BORDER);
-		text_12.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		text_12.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
+		new Label(composite_4, SWT.NONE);
 		
 		Canvas canvas = new Canvas(composite_4, SWT.NONE);
-		canvas.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		canvas.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 4, 1));
 		
 		TabItem tbtmImageSize = new TabItem(tabFolder, SWT.NONE);
 		tbtmImageSize.setText("Image Attributes");
