@@ -75,17 +75,6 @@ class SWGApp extends UserInterface with StatusMonitor with SiteInfoUI with Artic
     f.onFailure { case t => error(t) }
   }
 
-  def updateDefaultLanguages() {
-    val languages = allLanguages.map(_.languageName).toArray
-    defaultLanguageCombo.setItems(languages)
-    if (languages.length > 0) {
-      defaultLanguageCombo.select(0)
-    }
-    for (defaultLanguageCode <- project.defaultLanguageCode) {
-      defaultLanguageCombo.select(0 max allLanguages.indexWhere(_.languageCode == defaultLanguageCode))
-    }
-  }
-
   def loadAllLanguages() = {
     inTransaction {
       allLanguages = from(SWGSchema.languages)(x => select(x)).toList

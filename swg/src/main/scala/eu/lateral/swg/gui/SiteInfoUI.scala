@@ -29,6 +29,18 @@ trait SiteInfoUI {
       if (info isDefinedAt index) Some(info(index)) else None
     }
   }
+
+  def updateDefaultLanguages() {
+    val languages = allLanguages.map(_.languageName).toArray
+    defaultLanguageCombo.setItems(languages)
+    if (languages.length > 0) {
+      defaultLanguageCombo.select(0)
+    }
+    for (defaultLanguageCode <- project.defaultLanguageCode) {
+      defaultLanguageCombo.select(0 max allLanguages.indexWhere(_.languageCode == defaultLanguageCode))
+    }
+  }
+  
   override def loadDataIntoSiteInfo() {
     transaction {
       val ssi = selectedSiteInfo

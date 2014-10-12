@@ -75,10 +75,11 @@ public class UserInterface {
 	public Text text_12;
 	public Text text_13;
 	public Text text_14;
-	public Text text_15;
-	public Text text_16;
+	public Text galleryTitleText;
+	public Text galleryLinkText;
 	public Table table;
 	private Table table_1;
+	public Button confirmDeleteArticleButton;
 
 	/**
 	 * @wbp.parser.entryPoint
@@ -86,7 +87,7 @@ public class UserInterface {
 	public int createUI() {
 		Display display = new Display();
 		Shell mainShell = new Shell(display, SWT.RESIZE | SWT.TITLE);
-		mainShell.setSize(670, 488);
+		mainShell.setSize(670, 595);
 		mainShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent arg0) {
 					System.exit(0);
@@ -216,14 +217,31 @@ public class UserInterface {
 		composite_3.setLayout(new GridLayout(5, false));
 		
 		Button newArticleButton = new Button(composite_3, SWT.NONE);
+		newArticleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				newArticle();
+			}
+		});
 		newArticleButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		newArticleButton.setText("New");
 		
 		Button deleteArticleButton = new Button(composite_3, SWT.NONE);
+		deleteArticleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				deleteArticle();
+			}
+		});
 		deleteArticleButton.setText("Delete");
 		
-		Button btnConfirm = new Button(composite_3, SWT.CHECK);
-		btnConfirm.setText("Confirm");
+		confirmDeleteArticleButton = new Button(composite_3, SWT.CHECK);
+		confirmDeleteArticleButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+			}
+		});
+		confirmDeleteArticleButton.setText("Confirm");
 		
 		selectArticleCombo = new Combo(composite_3, SWT.NONE);
 		selectArticleCombo.addSelectionListener(new SelectionAdapter() {
@@ -250,8 +268,8 @@ public class UserInterface {
 		gd_articleLinkText.widthHint = 164;
 		articleLinkText.setLayoutData(gd_articleLinkText);
 		
-		Button articleShowInMenuButton = new Button(composite_3, SWT.CHECK);
-		articleShowInMenuButton.setText("Show in menu");
+		Button articlePublishButton = new Button(composite_3, SWT.CHECK);
+		articlePublishButton.setText("Publish");
 		
 		articleText = new StyledText(composite_3, SWT.BORDER);
 		GridData gd_articleText = new GridData(SWT.FILL, SWT.FILL, true, true, 5, 1);
@@ -263,7 +281,7 @@ public class UserInterface {
 		
 		Composite composite_4 = new Composite(tabFolder, SWT.NONE);
 		tbtmImage_1.setControl(composite_4);
-		composite_4.setLayout(new GridLayout(5, false));
+		composite_4.setLayout(new GridLayout(7, false));
 		
 		Button btnNew = new Button(composite_4, SWT.NONE);
 		btnNew.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -277,9 +295,21 @@ public class UserInterface {
 		gd_btnConfirm_1.widthHint = 102;
 		btnConfirm_1.setLayoutData(gd_btnConfirm_1);
 		btnConfirm_1.setText("Confirm");
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
+		
+		Canvas canvas = new Canvas(composite_4, SWT.NONE);
+		GridData gd_canvas = new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1);
+		gd_canvas.heightHint = 99;
+		canvas.setLayoutData(gd_canvas);
 		
 		table_1 = new Table(composite_4, SWT.BORDER | SWT.FULL_SELECTION);
-		table_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		GridData gd_table_1 = new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1);
+		gd_table_1.minimumHeight = 100;
+		gd_table_1.heightHint = 86;
+		table_1.setLayoutData(gd_table_1);
 		table_1.setHeaderVisible(true);
 		table_1.setLinesVisible(true);
 		new Label(composite_4, SWT.NONE);
@@ -291,30 +321,32 @@ public class UserInterface {
 		lblTitle_2.setText("Title:");
 		
 		text_9 = new Text(composite_4, SWT.BORDER);
-		text_9.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
+		text_9.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
 		
 		Label lblAuthor = new Label(composite_4, SWT.NONE);
 		lblAuthor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblAuthor.setText("Author:");
 		
 		text_13 = new Text(composite_4, SWT.BORDER);
-		text_13.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
+		text_13.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
 		
 		Label lblTechnique = new Label(composite_4, SWT.NONE);
 		lblTechnique.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTechnique.setText("Technique:");
 		
 		Combo combo_1 = new Combo(composite_4, SWT.NONE);
-		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
+		combo_1.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 6, 1));
 		
 		Label lblWidth_2 = new Label(composite_4, SWT.NONE);
 		lblWidth_2.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblWidth_2.setText("Width:");
 		
 		text_10 = new Text(composite_4, SWT.BORDER);
-		GridData gd_text_10 = new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1);
-		gd_text_10.widthHint = 166;
+		GridData gd_text_10 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
+		gd_text_10.widthHint = 100;
 		text_10.setLayoutData(gd_text_10);
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
 		new Label(composite_4, SWT.NONE);
 		new Label(composite_4, SWT.NONE);
 		
@@ -323,7 +355,11 @@ public class UserInterface {
 		lblHeight_2.setText("Height:");
 		
 		text_11 = new Text(composite_4, SWT.BORDER);
-		text_11.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		GridData gd_text_11 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1);
+		gd_text_11.widthHint = 100;
+		text_11.setLayoutData(gd_text_11);
+		new Label(composite_4, SWT.NONE);
+		new Label(composite_4, SWT.NONE);
 		new Label(composite_4, SWT.NONE);
 		new Label(composite_4, SWT.NONE);
 		
@@ -332,18 +368,16 @@ public class UserInterface {
 		lblInception.setText("Inception:");
 		
 		text_12 = new Text(composite_4, SWT.BORDER);
-		text_12.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 4, 1));
-		new Label(composite_4, SWT.NONE);
-		
-		Canvas canvas = new Canvas(composite_4, SWT.NONE);
-		canvas.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 4, 1));
+		GridData gd_text_12 = new GridData(SWT.LEFT, SWT.CENTER, true, false, 6, 1);
+		gd_text_12.widthHint = 100;
+		text_12.setLayoutData(gd_text_12);
 		
 		TabItem tbtmImageSize = new TabItem(tabFolder, SWT.NONE);
 		tbtmImageSize.setText("Image Attributes");
 		
 		Composite composite_2 = new Composite(tabFolder, SWT.NONE);
 		tbtmImageSize.setControl(composite_2);
-		composite_2.setLayout(new GridLayout(6, false));
+		composite_2.setLayout(new GridLayout(7, false));
 		
 		Label lblThumbnails = new Label(composite_2, SWT.NONE);
 		lblThumbnails.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
@@ -356,6 +390,7 @@ public class UserInterface {
 		
 		Label lblNewLabel = new Label(composite_2, SWT.NONE);
 		lblNewLabel.setText("Techniques:");
+		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		new Label(composite_2, SWT.NONE);
 		
@@ -371,7 +406,7 @@ public class UserInterface {
 		lblNewLabel_1.setText("Key:");
 		
 		text_7 = new Text(composite_2, SWT.BORDER);
-		text_7.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		text_7.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		Label lblHeight = new Label(composite_2, SWT.NONE);
 		lblHeight.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -385,7 +420,7 @@ public class UserInterface {
 		lblName.setText("Name:");
 		
 		text_8 = new Text(composite_2, SWT.BORDER);
-		text_8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+		text_8.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		Label label = new Label(composite_2, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
@@ -397,12 +432,15 @@ public class UserInterface {
 		Button btnDelete = new Button(composite_2, SWT.NONE);
 		btnDelete.setText("Delete");
 		
+		Button btnConfirm_2 = new Button(composite_2, SWT.CHECK);
+		btnConfirm_2.setText("Confirm");
+		
 		Label lblImage = new Label(composite_2, SWT.NONE);
 		lblImage.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 		lblImage.setText("Image:");
 		
 		List list = new List(composite_2, SWT.BORDER);
-		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 3, 3));
+		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 4, 3));
 		
 		Label lblWidth_1 = new Label(composite_2, SWT.NONE);
 		lblWidth_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -485,21 +523,38 @@ public class UserInterface {
 		
 		Composite composite_6 = new Composite(tabFolder, SWT.NONE);
 		tbtmGallery.setControl(composite_6);
-		composite_6.setLayout(new GridLayout(2, false));
+		composite_6.setLayout(new GridLayout(4, false));
+		
+		Button newGalleryButton = new Button(composite_6, SWT.NONE);
+		newGalleryButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+			}
+		});
+		newGalleryButton.setText("New");
+		
+		Button deleteGalleryButton = new Button(composite_6, SWT.NONE);
+		deleteGalleryButton.setText("Delete");
+		
+		Button confirmDeleteGalleryButton = new Button(composite_6, SWT.CHECK);
+		confirmDeleteGalleryButton.setText("Confirm");
+		
+		Combo gallerySelectionCombo = new Combo(composite_6, SWT.NONE);
+		gallerySelectionCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblTitle_4 = new Label(composite_6, SWT.NONE);
 		lblTitle_4.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblTitle_4.setText("Title:");
 		
-		text_15 = new Text(composite_6, SWT.BORDER);
-		text_15.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		galleryTitleText = new Text(composite_6, SWT.BORDER);
+		galleryTitleText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		Label lblLink = new Label(composite_6, SWT.NONE);
 		lblLink.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblLink.setText("Link:");
 		
-		text_16 = new Text(composite_6, SWT.BORDER);
-		text_16.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		galleryLinkText = new Text(composite_6, SWT.BORDER);
+		galleryLinkText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
 		
 		statusLabel = new Label(composite, SWT.NONE);
 		statusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
@@ -524,6 +579,12 @@ public class UserInterface {
 		
 	}
 	public void articleChanged(){
+		
+	}
+	public void newArticle(){
+		
+	}
+	public void deleteArticle(){
 		
 	}
 	public void setStatus(String text){
